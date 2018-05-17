@@ -3,6 +3,7 @@ package com.derivedmed.proj.services;
 import com.derivedmed.proj.model.Conf;
 import com.derivedmed.proj.model.User;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,4 +34,6 @@ public interface UserService extends Service {
     HashMap<Integer, String> isUserRegistered(int userId, List<Conf> confs);
 
     HashMap<Integer, String> isUserVoted(int userId, List<Conf> confs);
+
+    List<User> getFreeThisDate(Timestamp timestamp);
 }

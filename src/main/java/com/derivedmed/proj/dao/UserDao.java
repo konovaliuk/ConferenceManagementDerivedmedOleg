@@ -2,6 +2,7 @@ package com.derivedmed.proj.dao;
 
 import com.derivedmed.proj.model.Role;
 import com.derivedmed.proj.model.User;
+import com.derivedmed.proj.util.QueryGenerator;
 import com.derivedmed.proj.util.rsparser.ResultSetParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +14,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserDao implements CrudDao<User> {
 
@@ -43,17 +45,20 @@ public class UserDao implements CrudDao<User> {
     @Override
     public User getByID(int id) {
         User user = new User();
-        String GET_BY_ID_SQL = "SELECT * from users where user_id = ?";
+        QueryGenerator queryGenerator = new QueryGenerator();
+        String GET_BY_ID_SQL = queryGenerator
+                .select("*")
+                .from("users")
+                .where("user_id")
+                .generate();
+        Object[] values = {id};
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
-             PreparedStatement preparedStatement = connectionProxy
-                     .prepareStatement(GET_BY_ID_SQL)) {
-            preparedStatement.setInt(1, id);
+             PreparedStatement preparedStatement = queryGenerator.setValues(connectionProxy
+                     .prepareStatement(GET_BY_ID_SQL), values)) {
             ArrayList<User> resultList = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), user);
             if (!resultList.isEmpty()) {
                 user = resultList.get(0);
                 user.setRole(getRole(user.getId()));
-            } else {
-
             }
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
@@ -63,13 +68,15 @@ public class UserDao implements CrudDao<User> {
 
     @Override
     public boolean update(User user) {
-        String UPDATE_SQL = "UPDATE users SET login = ?, password = ?, role_id = ? WHERE user_id = ?";
+        QueryGenerator queryGenerator = new QueryGenerator();
+        String UPDATE_SQL = queryGenerator.update("users")
+                .set(new String[]{"login", "password", "role_id"})
+                .where("user_id")
+                .generate();
+        Object[] values = new Object[]{user.getLogin(), user.getPassword(), user.getRole_id(), user.getId()};
         try (ConnectionProxy connection = TransactionManager.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
-            preparedStatement.setString(1, user.getLogin());
-            preparedStatement.setString(2, user.getPassword());
-            preparedStatement.setInt(3, user.getRole_id());
-            preparedStatement.setInt(4, user.getId());
+             PreparedStatement preparedStatement = queryGenerator
+                     .setValues(connection.prepareStatement(UPDATE_SQL), values)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
@@ -149,20 +156,31 @@ public class UserDao implements CrudDao<User> {
         return 0;
     }
 
-    public boolean isSpeakerFreeThisDate(User user, Timestamp timestamp) {
-        boolean result = false;
-        String CHECK_SPEAKER_ACTIV_BY_DATE_SQL = "select * from users_reports ur join reports r ON ur.report_id = r.report_id JOIN confs c ON r.conf_id = c.conf_id where ur.user_id =? and c.conf_date =? and ur.active_speaker =?;";
+    public List<User> getSpeakersFreeThisDate(Timestamp timestamp) {
+        List<User> busyspeakers = busySpeakersByDate(timestamp);
+        List<User> speakers = getSpeakersByRating();
+        List<User> result = new ArrayList<>();
+        return speakers.stream().filter(s -> !busyspeakers.contains(s)).collect(Collectors.toList());
+    }
+
+    public List<User> busySpeakersByDate(Timestamp timestamp) {
+        List<User> busySpeakers = new ArrayList<>();
+        String CHECK_SPEAKER_ACTIV_BY_DATE_SQL = "SELECT users.*\n" +
+                "FROM users\n" +
+                "  JOIN users_reports u ON users.user_id = u.user_id\n" +
+                "  JOIN reports r ON u.report_id = r.report_id\n" +
+                "  JOIN confs c ON r.conf_id = c.conf_id\n" +
+                "WHERE role_id = ? AND active_speaker = ? AND c.conf_date = ?;";
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = connectionProxy.prepareStatement(CHECK_SPEAKER_ACTIV_BY_DATE_SQL)) {
-            preparedStatement.setInt(1, user.getId());
-            preparedStatement.setTimestamp(2, timestamp);
-            preparedStatement.setBoolean(3, true);
-            result = preparedStatement.executeQuery().next();
+            preparedStatement.setInt(1, getRoleId(Role.SPEAKER));
+            preparedStatement.setTimestamp(3, timestamp);
+            preparedStatement.setBoolean(2, true);
+            busySpeakers = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new User());
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
-            return false;
         }
-        return !result;
+        return busySpeakers;
     }
 
     public boolean registerUserToReport(int userId, int reportId) {
@@ -193,6 +211,7 @@ public class UserDao implements CrudDao<User> {
         }
         return resultList;
     }
+
 
     public boolean authUser(String login, String password) {
         boolean result = false;

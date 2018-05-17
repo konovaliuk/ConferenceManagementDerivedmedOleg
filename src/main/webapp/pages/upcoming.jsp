@@ -11,7 +11,14 @@
 <%@include file="menu.jsp" %>
 <ul class="list-group w-75" style="margin: auto; padding-top: 5px;">
     <c:forEach var="conf" items="${confs}">
-        <li class="list-group-item list-group-item-info text-center"><h4><c:out value="${conf.name}"/></h4></li>
+        <c:if test="${'MODERATOR'==user.role}">
+            <li class="text-left list-group-item">
+                <input type="hidden" name="confid" value="${conf.id}">
+                <a href="/main?command=editConf&confid=<c:out value="${conf.id}"/>" class="btn btn-dark">edit</a>
+            </li>
+        </c:if>
+        <li class="list-group-item list-group-item-info text-center"><h4><c:out value="${conf.name}"/></h4>
+        </li>
         <li class="list-group-item list-group-item-info text-center"><h5><c:out value="${conf.place}"/></h5></li>
         <li class="list-group-item list-group-item-info text-center"><h5><fmt:formatDate pattern="dd MMM yyyy HH:mm"
                                                                                          value="${conf.date}"/></h5>
@@ -29,9 +36,20 @@
                                     <p>Speaker : <c:out value="${report.speakerName}"/></p>
                                 </div>
                                 <div class="col-4" style="text-align: right;">
-                                    <button class="btn btn-dark btn-sm" <c:out
-                                            value="${isRegistered.get(report.id)}"/>>Register
-                                    </button>
+                                    <p>
+                                        <button class="btn btn-dark btn-sm" <c:out
+                                                value="${isRegistered.get(report.id)}"/>>Register
+                                        </button>
+                                    </p>
+                                    <c:if test="${'MODERATOR'==user.role}">
+                                        <input type="hidden" name="reportid" value="${report.id}">
+                                        <p>
+                                            <a class="btn btn-light btn-sm"
+                                               href="/main?command=editReport&reportid=<c:out value="${report.id}"/>"><c:out
+                                                    value="edit"/></a>
+                                        </p>
+                                    </c:if>
+
                                 </div>
                             </div>
                         </form>

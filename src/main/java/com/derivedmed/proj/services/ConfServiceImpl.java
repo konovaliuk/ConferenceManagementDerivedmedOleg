@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 
 public class ConfServiceImpl implements ConfService {
     private static ConfServiceImpl ourInstance = new ConfServiceImpl();
+    private final ConfDao confDao = DaoFactory.getInstance().getConfDao();
+    private final ReportDao reportDao = DaoFactory.getInstance().getReportDao();
 
     public static ConfServiceImpl getInstance() {
         return ourInstance;
@@ -25,26 +27,28 @@ public class ConfServiceImpl implements ConfService {
 
     @Override
     public int createConf(Conf conf) {
-        return DaoFactory.getInstance().getConfDao().create(conf);
+        return confDao.create(conf);
     }
 
     @Override
     public Conf getById(int id) {
-        return DaoFactory.getInstance().getConfDao().getByID(id);
+        return confDao.getByID(id);
     }
 
     @Override
     public boolean update(Conf conf) {
-        return DaoFactory.getInstance().getConfDao().update(conf);
+        return confDao.update(conf);
     }
 
     @Override
     public List<Conf> getAll() {
-        ConfDao confDao = DaoFactory.getInstance().getConfDao();
-        ReportDao reportDao = DaoFactory.getInstance().getReportDao();
         List<Conf> confs = confDao.getAll();
+        List<Report> confirmed = reportDao.getAllConfirmed();
         for (Conf conf : confs) {
-            conf.setReports(reportDao.getByConf(conf.getId()));
+            conf.setReports(confirmed
+                    .stream()
+                    .filter(r->r.getConf_id()==conf.getId())
+                    .collect(Collectors.toList()));
         }
         return confs;
     }

@@ -98,6 +98,20 @@ public class ReportDao implements CrudDao<Report> {
         return resultList;
     }
 
+    public List<Report> getAllConfirmed() {
+        List<Report> confirmed = new ArrayList<>();
+        String get_all_confirmed = "select r.* from reports r join users_reports ur on r.report_id = ur.report_id where confirmed = ?";
+        try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
+             PreparedStatement preparedStatement = connectionProxy.prepareStatement(get_all_confirmed)) {
+            preparedStatement.setBoolean(1, true);
+            confirmed = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new Report());
+            confirmed = setSpeakersToReport(connectionProxy,confirmed);
+        } catch (SQLException e) {
+            LOGGER.error(SQL_EXCEPTION, e);
+        }
+        return confirmed;
+    }
+
     @Override
     public boolean clearAll() {
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
@@ -156,7 +170,7 @@ public class ReportDao implements CrudDao<Report> {
         if (bySpeaker) {
             OFFER_REPORT_SQL = "insert into users_reports (active_speaker, by_speaker, by_moder,confirmed,user_id,report_id) values(?,?,?,?,?,?)";
         } else {
-            OFFER_REPORT_SQL = "update users_reports set active_speaker=?, by_speaker = ?, by_moder=? ,confirmed =? where user_id =? and report_id =?";
+            OFFER_REPORT_SQL = "update users_reports setValues active_speaker=?, by_speaker = ?, by_moder=? ,confirmed =? where user_id =? and report_id =?";
         }
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = connectionProxy.prepareStatement(OFFER_REPORT_SQL)) {
@@ -175,9 +189,14 @@ public class ReportDao implements CrudDao<Report> {
     }
 
     public boolean confirmOffer(int userId, int reportId) {
-        String CONFIRM_REPORT_SQL = "update users_reports set active_speaker = ?, confirmed = ? where user_id = ? and report_id = ?";
+        String sql;
+        if (isSpeakerReportExist(userId, reportId)) {
+            sql = "update users_reports setValues active_speaker = ?, confirmed = ? where user_id = ? and report_id = ?";
+        } else {
+            sql = "insert into users_reports (active_speaker, confirmed, user_id, report_id)  values(?,?,?,?)";
+        }
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
-             PreparedStatement preparedStatement = connectionProxy.prepareStatement(CONFIRM_REPORT_SQL)) {
+             PreparedStatement preparedStatement = connectionProxy.prepareStatement(sql)) {
             preparedStatement.setBoolean(1, true);
             preparedStatement.setBoolean(2, true);
             preparedStatement.setInt(3, userId);
@@ -190,12 +209,28 @@ public class ReportDao implements CrudDao<Report> {
         return true;
     }
 
+    private boolean isSpeakerReportExist(int userid, int reportid) {
+        boolean exist = false;
+        try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
+             PreparedStatement preparedStatement = connectionProxy.prepareStatement("select* from users_reports where user_id =? and report_id=?")) {
+            preparedStatement.setInt(1, userid);
+            preparedStatement.setInt(2, reportid);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            exist = resultSet.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return exist;
+    }
+
+
     public List<Report> getByConf(int id) {
         List<Report> result = new ArrayList<>();
-        String GET_BY_CONF = "select * from reports where conf_id =?";
+        String GET_BY_CONF = "select * from reports where conf_id =? and confirmed = ?";
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = connectionProxy.prepareStatement(GET_BY_CONF)) {
             preparedStatement.setInt(1, id);
+            preparedStatement.setBoolean(2, true);
             result = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new Report());
             result = setSpeakersToReport(connectionProxy, result);
         } catch (SQLException e) {
@@ -218,21 +253,22 @@ public class ReportDao implements CrudDao<Report> {
         return result;
     }
 
-    public List<Report> getReportsOfferedBySpeakerOrModer(int userid,boolean bySpeaker) {
+    public List<Report> getReportsOfferedBySpeakerOrModer(int userid, boolean bySpeaker) {
         String OFFERED_BY_SPEAKER_SQL = "select reports.report_id,conf_id,report_name,report_desk from reports join users_reports on reports.report_id = users_reports.report_id where user_id =? and by_speaker =? and by_moder =?";
         List<Report> reports = new ArrayList<>();
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = connectionProxy.prepareStatement(OFFERED_BY_SPEAKER_SQL)) {
-            preparedStatement.setInt(1,userid);
-            preparedStatement.setBoolean(2,bySpeaker);
-            preparedStatement.setBoolean(3,!bySpeaker);
-            reports = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(),new Report());
-            reports = setSpeakersToReport(connectionProxy,reports);
+            preparedStatement.setInt(1, userid);
+            preparedStatement.setBoolean(2, bySpeaker);
+            preparedStatement.setBoolean(3, !bySpeaker);
+            reports = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new Report());
+            reports = setSpeakersToReport(connectionProxy, reports);
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
         }
         return reports;
     }
+
 
     public List<Integer> votedByUser(int user_id) {
         List<Integer> reports = new ArrayList<>();

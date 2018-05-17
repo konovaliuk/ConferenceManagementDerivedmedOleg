@@ -7,6 +7,7 @@ import com.derivedmed.proj.model.Report;
 import com.derivedmed.proj.model.User;
 import com.derivedmed.proj.util.annotations.Transactional;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -113,5 +114,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean vote(int user_id, int report_id, int rating){
         return DaoFactory.getInstance().getUserDao().vote(user_id,report_id,rating);
+    }
+
+    @Override
+    public List<User> getFreeThisDate(Timestamp timestamp){
+        return DaoFactory.getInstance().getUserDao().getSpeakersFreeThisDate(timestamp);
     }
 }

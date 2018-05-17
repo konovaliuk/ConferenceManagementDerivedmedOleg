@@ -93,10 +93,8 @@ public class ReportServiceImpl implements ReportService {
         Report report = reportDao.getByID(reportId);
         Conf conf = confDao.getByID(report.getConf_id());
         Timestamp timestamp = conf.getDate();
-        if (userDao.isSpeakerFreeThisDate(user, timestamp)) {
-            return reportDao.confirmOffer(speakerId, reportId);
-        }
-        return false;
+        return !userDao.busySpeakersByDate(timestamp).contains(user)
+                && reportDao.confirmOffer(speakerId, reportId);
     }
     @Override
     public List<Report> getReportsOfferedBySpeakerOrModer(int speakerid, boolean bySpeaker){

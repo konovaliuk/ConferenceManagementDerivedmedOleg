@@ -1,6 +1,8 @@
 package com.derivedmed.proj.controller;
 
 import com.derivedmed.proj.command.Authorization;
+import com.derivedmed.proj.command.EditConf;
+import com.derivedmed.proj.command.EditReport;
 import com.derivedmed.proj.command.ICommand;
 import com.derivedmed.proj.command.LogOut;
 import com.derivedmed.proj.command.Main;
@@ -39,6 +41,8 @@ public class CommandResolver {
         commands.put("offer",new OfferBySpeaker());
         commands.put("mybonuses",new MyBonuses());
         commands.put("myoffers",new MyOffers());
+        commands.put("editConf",new EditConf());
+        commands.put("editReport",new EditReport());
     }
 
     public static CommandResolver getInstance() {

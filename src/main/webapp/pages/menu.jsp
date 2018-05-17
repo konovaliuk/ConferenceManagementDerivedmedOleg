@@ -23,7 +23,7 @@
     <li class="btn btn-light btn-sm">
         <a class="nav-link" href="/main?command=ratings">Ratings</a>
     </li>
-    <c:if test="${sessionScope.user.role_id==3}">
+    <c:if test="${user.role=='SPEAKER'}">
         <li class="btn btn-light btn-sm">
             <a class="nav-link" href="/main?command=offer">Offer report</a>
         </li>
@@ -34,7 +34,7 @@
             <a class="nav-link" href="/main?command=myoffers">My offers</a>
         </li>
     </c:if>
-    <c:if test="${sessionScope.user.role_id==1}">
+    <c:if test="${user.role=='ADMINISTRATOR'}">
         <li class="btn btn-light btn-sm">
             <a class="nav-link" href="#">Edit users</a>
         </li>

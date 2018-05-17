@@ -27,10 +27,10 @@
         <input type="hidden" name="command" value ="registration"/>
         <h2 class="text-center">Registration</h2>
         <div class="form-group  w-25 p-3" style="margin: auto;">
-            <input type="text" class="form-control" placeholder="Username" required="required" name="username">
+            <input type="text" class="form-control" placeholder="Username" required="required" name="username" pattern="[A-Za-z0-9]">
         </div>
         <div class="form-group  w-25 p-3" style="margin: auto;">
-            <input type="password" class="form-control" placeholder="Password" required="required" name="password">
+            <input type="password" class="form-control" placeholder="Password" required="required" name="password" pattern="[A-Za-z0-9]">
         </div>
         <div class="form-group w-25 p-3" style="margin: auto;">
             <button type="submit" class="btn btn-light">Register</button>
