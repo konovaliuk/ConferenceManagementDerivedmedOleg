@@ -48,6 +48,12 @@
                                                href="/main?command=editReport&reportid=<c:out value="${report.id}"/>"><c:out
                                                     value="edit"/></a>
                                         </p>
+                                        <p>
+
+                                            <a class="btn btn-light btn-sm"
+                                               href="/main?command=offerReport&reportid=<c:out value="${report.id}"/>"><c:out
+                                                    value="offerToSpeaker"/></a>
+                                        </p>
                                     </c:if>
 
                                 </div>

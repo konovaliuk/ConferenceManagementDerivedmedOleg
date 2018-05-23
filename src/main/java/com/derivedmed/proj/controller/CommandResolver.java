@@ -1,14 +1,16 @@
 package com.derivedmed.proj.controller;
 
+import com.derivedmed.proj.command.Action;
+import com.derivedmed.proj.command.Add;
 import com.derivedmed.proj.command.Authorization;
 import com.derivedmed.proj.command.EditConf;
 import com.derivedmed.proj.command.EditReport;
-import com.derivedmed.proj.command.ICommand;
 import com.derivedmed.proj.command.LogOut;
 import com.derivedmed.proj.command.Main;
 import com.derivedmed.proj.command.MyBonuses;
 import com.derivedmed.proj.command.MyConfs;
 import com.derivedmed.proj.command.MyOffers;
+import com.derivedmed.proj.command.OfferByModer;
 import com.derivedmed.proj.command.OfferBySpeaker;
 import com.derivedmed.proj.command.Past;
 import com.derivedmed.proj.command.Ratings;
@@ -23,7 +25,7 @@ import java.util.HashMap;
 
 public class CommandResolver {
 
-    private static final HashMap<String, ICommand> commands = new HashMap();
+    private static final HashMap<String, Action> commands = new HashMap();
     private static CommandResolver instance = new CommandResolver();
 
     private CommandResolver() {
@@ -43,14 +45,17 @@ public class CommandResolver {
         commands.put("myoffers",new MyOffers());
         commands.put("editConf",new EditConf());
         commands.put("editReport",new EditReport());
+        commands.put("add_report",new Add());
+        commands.put("addConf",new Add());
+        commands.put("offerReport",new OfferByModer());
     }
 
     public static CommandResolver getInstance() {
         return instance;
     }
 
-    public ICommand getCommand(HttpServletRequest request) {
-        ICommand command = commands.get(request.getParameter("command"));
+    public Action getCommand(HttpServletRequest request) {
+        Action command = commands.get(request.getParameter("command"));
         if (command == null) {
             command = commands.get("wrong");
         }

@@ -7,7 +7,7 @@ import com.derivedmed.proj.services.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class Authorization implements ICommand {
+public class Authorization implements Action {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         String login = req.getParameter("login");

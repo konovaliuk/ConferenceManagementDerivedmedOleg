@@ -105,6 +105,11 @@ public class ReportServiceImpl implements ReportService {
         return reports;
     }
 
+    @Override
+    public List<Report> offeredBySpeakers() {
+        return DaoFactory.getInstance().getReportDao().reportsOfferedBySpeakers();
+    }
+
     private List<Report> setConfNameAndDate(List<Report> reports, ConfDao confDao){
         for (Report report : reports){
             Conf conf = confDao.getByID(report.getConf_id());

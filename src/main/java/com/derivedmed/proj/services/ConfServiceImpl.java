@@ -43,7 +43,7 @@ public class ConfServiceImpl implements ConfService {
     @Override
     public List<Conf> getAll() {
         List<Conf> confs = confDao.getAll();
-        List<Report> confirmed = reportDao.getAllConfirmed();
+        List<Report> confirmed = reportDao.getAll();
         for (Conf conf : confs) {
             conf.setReports(confirmed
                     .stream()
@@ -59,7 +59,7 @@ public class ConfServiceImpl implements ConfService {
                 .filter(conf -> conf.getDate().getTime() > new Date().getTime())
                 .collect(Collectors.toList());
 
-        if (user.getRole() == Role.MODERATOR || user.getRole() == Role.ADMINISTRATOR || user.getRole() == Role.SPEAKER) {
+        if (user.getRole() == Role.MODERATOR || user.getRole() == Role.ADMINISTRATOR/* || user.getRole() == Role.SPEAKER*/) {
             return confs;
         }
         List<Conf> result = new ArrayList<>();

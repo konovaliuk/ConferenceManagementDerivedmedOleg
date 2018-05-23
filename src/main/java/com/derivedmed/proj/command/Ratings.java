@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-public class Ratings implements ICommand {
+public class Ratings implements Action {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         UserService userService = ServiceFactory.getUserService();

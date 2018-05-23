@@ -10,27 +10,30 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-public class MyOffers implements ICommand {
+public class MyOffers implements Action {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         User user = (User) req.getSession().getAttribute("user");
-        if (user.getRole()!= Role.SPEAKER){
+        if (user.getRole() == Role.USER) {
             return "pages/403.jsp";
         }
         ReportService reportService = ServiceFactory.getReportService();
-        setAttributes(req,reportService,user);
+        setAttributes(req, reportService, user);
         if (req.getMethod().equals("GET")) {
             return "pages/myoffers.jsp";
         }
         reportService.confirmOffer(user.getId(), Integer.parseInt(req.getParameter("reportid")));
-        setAttributes(req,reportService,user);
+        setAttributes(req, reportService, user);
         return "pages/myoffers.jsp";
     }
-    private void setAttributes(HttpServletRequest req, ReportService reportService, User user){
+
+    private void setAttributes(HttpServletRequest req, ReportService reportService, User user) {
         List<Report> reports = reportService.getReportsOfferedBySpeakerOrModer(user.getId(), true);
         req.setAttribute("reports", reports);
         List<Report> reportsByModer = reportService.getReportsOfferedBySpeakerOrModer(user.getId(), false);
         req.setAttribute("reportsByModer", reportsByModer);
+        List<Report> reportsBySpeakers = reportService.offeredBySpeakers();
+        req.setAttribute("reportsBySpeakers", reportsBySpeakers);
     }
 
 }

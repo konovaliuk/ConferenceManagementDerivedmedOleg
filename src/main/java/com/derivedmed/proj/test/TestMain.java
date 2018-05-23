@@ -12,7 +12,7 @@ public class TestMain {
     private static final ReportDao reportDao = DaoFactory.getInstance().getReportDao();
 
     public static void main(String[] args) {
-        reportDao.getAllConfirmed().forEach(System.out::println);
+        reportDao.offerReport(9,22,false);
     }
 
 }

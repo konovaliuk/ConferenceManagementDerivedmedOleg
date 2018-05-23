@@ -39,6 +39,14 @@
             <a class="nav-link" href="#">Edit users</a>
         </li>
     </c:if>
+    <c:if test="${user.role=='MODERATOR'}">
+        <li class="btn btn-light btn-sm">
+            <a class="nav-link" href="/main?command=add_report"><c:out value="Conference control"/></a>
+        </li>
+        <li class="btn btn-light btn-sm">
+            <a class="nav-link" href="/main?command=offers">Offers</a>
+        </li>
+    </c:if>
     <li class="btn justify-content-left btn-light btn-sm">
         <a class="nav-link" href="/main?command=logOut">LogOut</a>
     </li>

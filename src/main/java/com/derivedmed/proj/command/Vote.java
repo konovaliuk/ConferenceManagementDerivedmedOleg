@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 
-public class Vote implements ICommand {
+public class Vote implements Action {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         UserService userService = ServiceFactory.getUserService();

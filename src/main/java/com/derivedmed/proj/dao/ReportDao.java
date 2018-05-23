@@ -1,6 +1,8 @@
 package com.derivedmed.proj.dao;
 
 import com.derivedmed.proj.model.Report;
+import com.derivedmed.proj.model.User;
+import com.derivedmed.proj.util.QueryGenerator;
 import com.derivedmed.proj.util.rsparser.ResultSetParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +14,9 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ReportDao implements CrudDao<Report> {
 
@@ -87,11 +91,12 @@ public class ReportDao implements CrudDao<Report> {
 
     @Override
     public List<Report> getAll() {
-        ArrayList<Report> resultList = new ArrayList<>();
+        List<Report> resultList = new ArrayList<>();
         String GET_ALL_SQL = "select * from reports";
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = connectionProxy.prepareStatement(GET_ALL_SQL)) {
             resultList = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new Report());
+            resultList = setSpeakersToReport(connectionProxy, resultList);
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
         }
@@ -105,7 +110,7 @@ public class ReportDao implements CrudDao<Report> {
              PreparedStatement preparedStatement = connectionProxy.prepareStatement(get_all_confirmed)) {
             preparedStatement.setBoolean(1, true);
             confirmed = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new Report());
-            confirmed = setSpeakersToReport(connectionProxy,confirmed);
+            confirmed = setSpeakersToReport(connectionProxy, confirmed);
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
         }
@@ -166,14 +171,9 @@ public class ReportDao implements CrudDao<Report> {
     }
 
     public boolean offerReport(int speakerId, int reportId, boolean bySpeaker) {
-        String OFFER_REPORT_SQL = "";
-        if (bySpeaker) {
-            OFFER_REPORT_SQL = "insert into users_reports (active_speaker, by_speaker, by_moder,confirmed,user_id,report_id) values(?,?,?,?,?,?)";
-        } else {
-            OFFER_REPORT_SQL = "update users_reports setValues active_speaker=?, by_speaker = ?, by_moder=? ,confirmed =? where user_id =? and report_id =?";
-        }
-        try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
-             PreparedStatement preparedStatement = connectionProxy.prepareStatement(OFFER_REPORT_SQL)) {
+        try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection()) {
+            String sql = updateOrInsert(connectionProxy, speakerId, reportId);
+            PreparedStatement preparedStatement = connectionProxy.prepareStatement(sql);
             preparedStatement.setBoolean(1, false);
             preparedStatement.setBoolean(2, bySpeaker);
             preparedStatement.setBoolean(3, !bySpeaker);
@@ -181,6 +181,7 @@ public class ReportDao implements CrudDao<Report> {
             preparedStatement.setInt(5, speakerId);
             preparedStatement.setInt(6, reportId);
             preparedStatement.executeUpdate();
+            preparedStatement.close();
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
             return false;
@@ -188,10 +189,44 @@ public class ReportDao implements CrudDao<Report> {
         return true;
     }
 
+    private String updateOrInsert(ConnectionProxy connectionProxy, int speakerId, int reportId) {
+        QueryGenerator queryGenerator = new QueryGenerator();
+        String result = "";
+        String sql = queryGenerator.select("*")
+                .from("users_reports")
+                .where("user_id")
+                .and("report_id")
+                .generate();
+        try (PreparedStatement preparedStatement = queryGenerator.setValues(connectionProxy.prepareStatement(sql), new Object[]{speakerId, reportId});
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (!resultSet.next()) {
+                result = new QueryGenerator()
+                        .insert("users_reports", new String[]{"active_speaker", "by_speaker", "by_moder", "confirmed", "user_id", "report_id"})
+                        .generate();
+            } else {
+                result = new QueryGenerator()
+                        .update("users_reports")
+                        .set(new String[]{"active_speaker", "by_speaker", "by_moder", "confirmed"})
+                        .where("user_id")
+                        .and("report_id")
+                        .generate();
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error(SQL_EXCEPTION, e);
+        }
+        return result;
+    }
+
     public boolean confirmOffer(int userId, int reportId) {
+        QueryGenerator queryGenerator = new QueryGenerator();
         String sql;
         if (isSpeakerReportExist(userId, reportId)) {
-            sql = "update users_reports setValues active_speaker = ?, confirmed = ? where user_id = ? and report_id = ?";
+            sql = queryGenerator.update("users_reports")
+                    .set(new String[]{"active_speaker", "confirmed"})
+                    .where("user_id")
+                    .and("report_id")
+                    .generate();
         } else {
             sql = "insert into users_reports (active_speaker, confirmed, user_id, report_id)  values(?,?,?,?)";
         }
@@ -202,6 +237,12 @@ public class ReportDao implements CrudDao<Report> {
             preparedStatement.setInt(3, userId);
             preparedStatement.setInt(4, reportId);
             preparedStatement.executeUpdate();
+            PreparedStatement preparedStatement1 = connectionProxy.prepareStatement("update users_reports set by_moder = ?, by_speaker = ? where report_id = ? and user_id <> ?");
+            preparedStatement1.setBoolean(1, false);
+            preparedStatement1.setBoolean(2, false);
+            preparedStatement1.setInt(3, reportId);
+            preparedStatement1.setInt(4, userId);
+            preparedStatement1.executeUpdate();
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
             return false;
@@ -299,5 +340,37 @@ public class ReportDao implements CrudDao<Report> {
             LOGGER.error(SQL_EXCEPTION, e);
         }
         return result;
+    }
+
+    public List<Report> reportsOfferedBySpeakers() {
+        Map<Report, User> reportsFromSpeakers = new HashMap<>();
+        List<Report> reports = new ArrayList<>();
+        QueryGenerator queryGenerator = new QueryGenerator();
+        String sql = queryGenerator.select("reports.*")
+                .from("reports")
+                .join("users_reports", "reports.report_id = users_reports.report_id")
+                .where("active_speaker")
+                .and("confirmed")
+                .and("by_speaker")
+                .generate();
+        try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
+             PreparedStatement preparedStatement = queryGenerator.setValues(connectionProxy
+                     .prepareStatement(sql), new Object[]{false, false, true})) {
+            reports = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new Report());
+            for (Report report : reports) {
+                int reportId = report.getId();
+                PreparedStatement ps = connectionProxy.prepareStatement("select users.* from users join users_reports on users.user_id = users_reports.user_id where by_speaker =? and active_speaker = ? and confirmed = ? and report_id = ?");
+            }
+            if (!reports.isEmpty()) {
+                return reports;
+            }
+        } catch (SQLException e) {
+            LOGGER.error(SQL_EXCEPTION, e);
+        }
+        return reports;
+    }
+
+    private User getOfferer(PreparedStatement preparedStatement,int reportId){
+
     }
 }

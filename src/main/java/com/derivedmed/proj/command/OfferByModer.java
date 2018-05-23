@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.List;
 
-public class EditReport implements Action {
+public class OfferByModer implements Action {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         User user = (User) req.getSession().getAttribute("user");
@@ -30,18 +30,14 @@ public class EditReport implements Action {
         req.setAttribute("speakers", speakers);
         req.setAttribute("report", report);
         if (req.getMethod().equals("GET")) {
-            return "pages/editreport.jsp";
-        }
-        String reportName = req.getParameter("reportName");
-        if (!"".equals(reportName)) {
-            report.setReport_name(reportName);
-            reportService.update(report);
+            return "pages/offerToSpeaker.jsp";
         }
         String speakerid = req.getParameter("speakerid");
         if (speakerid != null) {
             int id = Integer.parseInt(speakerid);
-            reportService.setReportToSpeaker(id, report.getId());
+            reportService.offerReport(id, report.getId(),user.getRole());
+            return new UpcomingConfs().execute(req,resp);
         }
-        return new UpcomingConfs().execute(req, resp);
+        return "pages/wrong.jsp";
     }
 }

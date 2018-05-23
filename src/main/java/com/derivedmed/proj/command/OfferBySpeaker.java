@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-public class OfferBySpeaker implements ICommand {
+public class OfferBySpeaker implements Action {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         ReportService reportService = ServiceFactory.getReportService();

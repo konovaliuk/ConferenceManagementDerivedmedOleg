@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 
-public class UpcomingConfs implements ICommand {
+public class UpcomingConfs implements Action {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         User user = (User) req.getSession().getAttribute("user");
@@ -21,6 +21,6 @@ public class UpcomingConfs implements ICommand {
         HashMap<Integer, String> isUserRegisteredForReport = userService.isUserRegistered(user.getId(), confs);
         req.getSession().setAttribute("isRegistered", isUserRegisteredForReport);
         req.setAttribute("confs", confs);
-        return "pages/upcoming.jsp";
+        return "pages/upoming.jsp";
     }
 }
