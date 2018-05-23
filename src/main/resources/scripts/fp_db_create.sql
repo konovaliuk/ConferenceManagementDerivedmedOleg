@@ -16,7 +16,7 @@ create table confs
   conf_id              int not null AUTO_INCREMENT,
   conf_name            varchar(44) not null,
   conf_place           varchar(44) not null,
-  conf_date            timestamp not null,
+  confDate            timestamp not null,
   primary key (conf_id)
 )
   CHARACTER SET utf8 COLLATE utf8_unicode_ci;

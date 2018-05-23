@@ -21,6 +21,6 @@ public class UpcomingConfs implements Action {
         HashMap<Integer, String> isUserRegisteredForReport = userService.isUserRegistered(user.getId(), confs);
         req.getSession().setAttribute("isRegistered", isUserRegisteredForReport);
         req.setAttribute("confs", confs);
-        return "pages/upoming.jsp";
+        return "pages/upcoming.jsp";
     }
 }

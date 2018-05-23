@@ -1,22 +1,16 @@
 package com.derivedmed.proj.dao;
 
 import com.derivedmed.proj.model.Report;
-import com.derivedmed.proj.model.User;
+import com.derivedmed.proj.model.ReportOfferedBySpeaker;
 import com.derivedmed.proj.util.QueryGenerator;
 import com.derivedmed.proj.util.rsparser.ResultSetParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ReportDao implements CrudDao<Report> {
 
@@ -342,35 +336,29 @@ public class ReportDao implements CrudDao<Report> {
         return result;
     }
 
-    public List<Report> reportsOfferedBySpeakers() {
-        Map<Report, User> reportsFromSpeakers = new HashMap<>();
-        List<Report> reports = new ArrayList<>();
+    public List<ReportOfferedBySpeaker> reportsOfferedBySpeakers(boolean confirmed) {
+
+        List<ReportOfferedBySpeaker> reportOfferedBySpeakers = new ArrayList<>();
         QueryGenerator queryGenerator = new QueryGenerator();
-        String sql = queryGenerator.select("reports.*")
-                .from("reports")
-                .join("users_reports", "reports.report_id = users_reports.report_id")
-                .where("active_speaker")
-                .and("confirmed")
+        String sql = queryGenerator.select("c.conf_id, confirmed, ur.user_id, ur.report_id, u.login, r.report_name, c.conf_name, c.conf_date")
+                .from("users u")
+                .join("users_reports ur", "u.user_id = ur.user_id")
+                .join("reports r", "ur.report_id = r.report_id")
+                .join("confs c", "r.conf_id = c.conf_id")
+                .where("u.role_id")
                 .and("by_speaker")
-                .generate();
+                .and("confirmed")
+                .and("active_speaker").generate();
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
-             PreparedStatement preparedStatement = queryGenerator.setValues(connectionProxy
-                     .prepareStatement(sql), new Object[]{false, false, true})) {
-            reports = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new Report());
-            for (Report report : reports) {
-                int reportId = report.getId();
-                PreparedStatement ps = connectionProxy.prepareStatement("select users.* from users join users_reports on users.user_id = users_reports.user_id where by_speaker =? and active_speaker = ? and confirmed = ? and report_id = ?");
-            }
-            if (!reports.isEmpty()) {
-                return reports;
+             PreparedStatement preparedStatement = queryGenerator.setValues(connectionProxy.prepareStatement(sql), new Object[]{3, true, confirmed, confirmed})) {
+            reportOfferedBySpeakers = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new ReportOfferedBySpeaker());
+            if (!reportOfferedBySpeakers.isEmpty()) {
+                return reportOfferedBySpeakers;
             }
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
         }
-        return reports;
+        return reportOfferedBySpeakers;
     }
 
-    private User getOfferer(PreparedStatement preparedStatement,int reportId){
-
-    }
 }

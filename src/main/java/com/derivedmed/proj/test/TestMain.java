@@ -12,7 +12,8 @@ public class TestMain {
     private static final ReportDao reportDao = DaoFactory.getInstance().getReportDao();
 
     public static void main(String[] args) {
-        reportDao.offerReport(9,22,false);
+        int s = Integer.parseInt("s");
+        System.out.println(s);
     }
 
 }

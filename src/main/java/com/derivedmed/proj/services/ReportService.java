@@ -1,6 +1,7 @@
 package com.derivedmed.proj.services;
 
 import com.derivedmed.proj.model.Report;
+import com.derivedmed.proj.model.ReportOfferedBySpeaker;
 import com.derivedmed.proj.model.Role;
 
 import java.util.List;
@@ -25,10 +26,11 @@ public interface ReportService extends Service {
 
     boolean offerReport(int speakerId, int reportId, Role role);
 
-    boolean confirmOffer(int userId,int reportId);
+    boolean confirmOffer(int userId, int reportId);
 
     boolean setReportToSpeaker(int speakerId, int reportId);
 
     List<Report> getReportsOfferedBySpeakerOrModer(int speakerid, boolean bySpeaker);
-    List<Report> offeredBySpeakers();
+
+    List<ReportOfferedBySpeaker> offeredBySpeakers(boolean confirmed);
 }

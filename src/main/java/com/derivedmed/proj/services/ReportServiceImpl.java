@@ -4,10 +4,7 @@ import com.derivedmed.proj.dao.ConfDao;
 import com.derivedmed.proj.dao.ReportDao;
 import com.derivedmed.proj.dao.UserDao;
 import com.derivedmed.proj.factory.DaoFactory;
-import com.derivedmed.proj.model.Conf;
-import com.derivedmed.proj.model.Report;
-import com.derivedmed.proj.model.Role;
-import com.derivedmed.proj.model.User;
+import com.derivedmed.proj.model.*;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -106,8 +103,8 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public List<Report> offeredBySpeakers() {
-        return DaoFactory.getInstance().getReportDao().reportsOfferedBySpeakers();
+    public List<ReportOfferedBySpeaker> offeredBySpeakers(boolean confirmed) {
+        return DaoFactory.getInstance().getReportDao().reportsOfferedBySpeakers(confirmed);
     }
 
     private List<Report> setConfNameAndDate(List<Report> reports, ConfDao confDao){

@@ -44,7 +44,7 @@
             <a class="nav-link" href="/main?command=add_report"><c:out value="Conference control"/></a>
         </li>
         <li class="btn btn-light btn-sm">
-            <a class="nav-link" href="/main?command=offers">Offers</a>
+            <a class="nav-link" href="/main?command=offersControl">Offers Control</a>
         </li>
     </c:if>
     <li class="btn justify-content-left btn-light btn-sm">

@@ -1,24 +1,6 @@
 package com.derivedmed.proj.controller;
 
-import com.derivedmed.proj.command.Action;
-import com.derivedmed.proj.command.Add;
-import com.derivedmed.proj.command.Authorization;
-import com.derivedmed.proj.command.EditConf;
-import com.derivedmed.proj.command.EditReport;
-import com.derivedmed.proj.command.LogOut;
-import com.derivedmed.proj.command.Main;
-import com.derivedmed.proj.command.MyBonuses;
-import com.derivedmed.proj.command.MyConfs;
-import com.derivedmed.proj.command.MyOffers;
-import com.derivedmed.proj.command.OfferByModer;
-import com.derivedmed.proj.command.OfferBySpeaker;
-import com.derivedmed.proj.command.Past;
-import com.derivedmed.proj.command.Ratings;
-import com.derivedmed.proj.command.RegisterToReport;
-import com.derivedmed.proj.command.Registration;
-import com.derivedmed.proj.command.UpcomingConfs;
-import com.derivedmed.proj.command.Vote;
-import com.derivedmed.proj.command.WrongCommand;
+import com.derivedmed.proj.command.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -36,18 +18,19 @@ public class CommandResolver {
         commands.put("regToRep", new RegisterToReport());
         commands.put("logOut", new LogOut());
         commands.put("main", new Main());
-        commands.put("past",new Past());
-        commands.put("vote",new Vote());
-        commands.put("myconfs",new MyConfs());
-        commands.put("ratings",new Ratings());
-        commands.put("offer",new OfferBySpeaker());
-        commands.put("mybonuses",new MyBonuses());
-        commands.put("myoffers",new MyOffers());
-        commands.put("editConf",new EditConf());
-        commands.put("editReport",new EditReport());
-        commands.put("add_report",new Add());
-        commands.put("addConf",new Add());
-        commands.put("offerReport",new OfferByModer());
+        commands.put("past", new Past());
+        commands.put("vote", new Vote());
+        commands.put("myconfs", new MyConfs());
+        commands.put("ratings", new Ratings());
+        commands.put("offer", new OfferBySpeaker());
+        commands.put("mybonuses", new MyBonuses());
+        commands.put("myoffers", new MyOffers());
+        commands.put("editConf", new EditConf());
+        commands.put("editReport", new EditReport());
+        commands.put("add_report", new Add());
+        commands.put("addConf", new Add());
+        commands.put("offerReport", new OfferByModer());
+        commands.put("offersControl", new OffersControl());
     }
 
     public static CommandResolver getInstance() {
@@ -55,7 +38,12 @@ public class CommandResolver {
     }
 
     public Action getCommand(HttpServletRequest request) {
-        Action command = commands.get(request.getParameter("command"));
+        String commandString = request.getParameter("command");
+        System.out.println(commandString);
+        Action command = commands.get(commandString);
+        if (commandString == null) {
+            return commands.get("main");
+        }
         if (command == null) {
             command = commands.get("wrong");
         }

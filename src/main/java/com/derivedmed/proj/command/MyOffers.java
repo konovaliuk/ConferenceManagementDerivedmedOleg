@@ -32,8 +32,6 @@ public class MyOffers implements Action {
         req.setAttribute("reports", reports);
         List<Report> reportsByModer = reportService.getReportsOfferedBySpeakerOrModer(user.getId(), false);
         req.setAttribute("reportsByModer", reportsByModer);
-        List<Report> reportsBySpeakers = reportService.offeredBySpeakers();
-        req.setAttribute("reportsBySpeakers", reportsBySpeakers);
     }
 
 }
