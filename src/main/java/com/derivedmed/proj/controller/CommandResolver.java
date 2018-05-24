@@ -37,13 +37,9 @@ public class CommandResolver {
         return instance;
     }
 
-    public Action getCommand(HttpServletRequest request) {
+    Action getCommand(HttpServletRequest request) {
         String commandString = request.getParameter("command");
-        System.out.println(commandString);
         Action command = commands.get(commandString);
-        if (commandString == null) {
-            return commands.get("main");
-        }
         if (command == null) {
             command = commands.get("wrong");
         }

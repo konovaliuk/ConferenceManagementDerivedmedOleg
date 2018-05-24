@@ -1,5 +1,7 @@
 package com.derivedmed.proj.controller;
 
+import com.derivedmed.proj.notification.scheduler.SchedulerStarter;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +11,16 @@ import java.io.IOException;
 
 public class PlainOldServlet extends HttpServlet {
     private final CommandResolver resolver = CommandResolver.getInstance();
+
+    @Override
+    public void init() throws ServletException {
+        SchedulerStarter.startSheduler();
+    }
+
+    @Override
+    public void destroy() {
+        SchedulerStarter.stop();
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

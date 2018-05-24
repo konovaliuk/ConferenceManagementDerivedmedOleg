@@ -1,5 +1,6 @@
 package com.derivedmed.proj.dao;
 
+import com.derivedmed.proj.model.MailData;
 import com.derivedmed.proj.model.Report;
 import com.derivedmed.proj.model.ReportOfferedBySpeaker;
 import com.derivedmed.proj.util.QueryGenerator;
@@ -320,22 +321,6 @@ public class ReportDao implements CrudDao<Report> {
         return reports;
     }
 
-    private List<Report> setSpeakersToReport(ConnectionProxy connectionProxy, List<Report> result) {
-        try (PreparedStatement preparedStatement = connectionProxy.prepareStatement("select login from users u join users_reports ur on u.user_id = ur.user_id where report_id = ? and active_speaker = ?")) {
-            for (Report report : result) {
-                preparedStatement.setInt(1, report.getId());
-                preparedStatement.setBoolean(2, true);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                if (resultSet.next()) {
-                    report.setSpeakerName(resultSet.getString(1));
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error(SQL_EXCEPTION, e);
-        }
-        return result;
-    }
-
     public List<ReportOfferedBySpeaker> reportsOfferedBySpeakers(boolean confirmed) {
 
         List<ReportOfferedBySpeaker> reportOfferedBySpeakers = new ArrayList<>();
@@ -359,6 +344,47 @@ public class ReportDao implements CrudDao<Report> {
             LOGGER.error(SQL_EXCEPTION, e);
         }
         return reportOfferedBySpeakers;
+    }
+
+    public List<MailData> getDataForNotifications(Timestamp time) {
+        QueryGenerator queryGenerator = new QueryGenerator();
+        List<MailData> result = new ArrayList<>();
+        long oneDayMillis = 24 * 60 * 60 * 1000;
+        Timestamp nextDay = new Timestamp(time.getTime() + oneDayMillis);
+//        String sql = queryGenerator.select("u.email, u.login, c.conf_name, c.conf_place, c.conf_date")
+//                .from("users u")
+//                .join("users_reports ur", "u.user_id = ur.user.id")
+//                .join("reports r", "ur.report_id = r. preort_id")
+//                .join("confs c", "r.conf_id = c.conf_id")
+//                .where("conf_date").generate();
+        String sql = "select r.report_name, u.email, u.login, c.conf_name, c.conf_place, c.conf_date from users u join users_reports ur on u.user_id = ur.user_id join reports r on ur.report_id = r.report_id join confs c on r.conf_id = c.conf_id where c.conf_date>? and c.conf_date<? group by u.email";
+        try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
+             PreparedStatement preparedStatement = queryGenerator.setValues(connectionProxy.prepareStatement(sql), new Object[]{time,nextDay})) {
+            result = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new MailData());
+            if (!result.isEmpty()) {
+                return result;
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error(SQL_EXCEPTION, e);
+        }
+        return result;
+    }
+
+    private List<Report> setSpeakersToReport(ConnectionProxy connectionProxy, List<Report> result) {
+        try (PreparedStatement preparedStatement = connectionProxy.prepareStatement("select login from users u join users_reports ur on u.user_id = ur.user_id where report_id = ? and active_speaker = ?")) {
+            for (Report report : result) {
+                preparedStatement.setInt(1, report.getId());
+                preparedStatement.setBoolean(2, true);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    report.setSpeakerName(resultSet.getString(1));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error(SQL_EXCEPTION, e);
+        }
+        return result;
     }
 
 }

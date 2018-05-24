@@ -28,7 +28,7 @@ public class ReportOfferedBySpeaker {
     private String reportName;
 
     @Column(name = "login")
-    private String userName;
+    private String speakerName;
 
     @Column(name = "confirmed")
     private boolean confirmed;
@@ -89,12 +89,12 @@ public class ReportOfferedBySpeaker {
         this.reportName = reportName;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getSpeakerName() {
+        return speakerName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setSpeakerName(String speakerName) {
+        this.speakerName = speakerName;
     }
 
     @Override
@@ -105,13 +105,13 @@ public class ReportOfferedBySpeaker {
         return Objects.equals(confName, that.confName) &&
                 Objects.equals(confDate, that.confDate) &&
                 Objects.equals(reportName, that.reportName) &&
-                Objects.equals(userName, that.userName);
+                Objects.equals(speakerName, that.speakerName);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(confName, confDate, reportName, userName);
+        return Objects.hash(confName, confDate, reportName, speakerName);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class ReportOfferedBySpeaker {
                 "confName='" + confName + '\'' +
                 ", confDate=" + confDate +
                 ", reportName='" + reportName + '\'' +
-                ", userName='" + userName + '\'' +
+                ", speakerName='" + speakerName + '\'' +
                 '}';
     }
 }

@@ -42,6 +42,7 @@ create table users
 (
   user_id              int not null AUTO_INCREMENT,
   role_id              int not null,
+  email                varchar(44) not null UNIQUE ,
   login                varchar(44) not null UNIQUE ,
   password             varchar(44) not null,
   rating               int DEFAULT 0,

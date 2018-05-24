@@ -17,6 +17,7 @@ public class Registration implements Action {
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         User user = new User();
         user.setLogin(req.getParameter("username"));
+        user.setEmail(req.getParameter("email"));
         user.setPassword(req.getParameter("password"));
         user.setRole(Role.USER);
         int id = ServiceFactory.getUserService().createUser(user);
@@ -25,7 +26,7 @@ public class Registration implements Action {
             req.getSession().setAttribute("user", user);
             return "pages/main.jsp";
         }
-        req.setAttribute("message", "sorry,current login already taken");
+        req.setAttribute("message", "sorry,current login or email already taken");
         return "pages/registration.jsp";
     }
 }

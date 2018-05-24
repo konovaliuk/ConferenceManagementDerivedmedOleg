@@ -19,7 +19,7 @@ public class Authorization implements Action {
             req.getSession().setAttribute("user", user);
             return "pages/main.jsp";
         }
-        req.setAttribute("message", "invalid username or password");
+        req.setAttribute("message", "invalid email or password");
         return "pages/authorization.jsp";
     }
 }

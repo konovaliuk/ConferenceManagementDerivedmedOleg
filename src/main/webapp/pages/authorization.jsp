@@ -10,7 +10,7 @@
     <form action="/main" method="post">
         <h2 class="text-center">Log in</h2>
         <div class="form-group  w-25 p-3" style="margin: auto;">
-            <input type="text" class="form-control" placeholder="Username" required="required" name="login">
+            <input type="email" class="form-control" placeholder="Email" required="required" name="login">
         </div>
         <div class="form-group  w-25 p-3" style="margin: auto;">
             <input type="password" class="form-control" placeholder="Password" required="required" name="password">

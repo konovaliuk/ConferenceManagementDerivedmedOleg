@@ -17,6 +17,9 @@ public class User {
     @Column(name = "login")
     private String login;
 
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "password")
     private String password;
 
@@ -29,11 +32,12 @@ public class User {
 
     }
 
-    public User(int role_id, String login, String password, int rating) {
-        this.role_id = role_id;
-        this.login = login;
-        this.password = password;
-        this.rating = rating;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Role getRole() {
@@ -87,19 +91,21 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return id == user.id &&
                 role_id == user.role_id &&
                 rating == user.rating &&
                 Objects.equals(login, user.login) &&
-                Objects.equals(password, user.password);
+                Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password) &&
+                role == user.role;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, role_id, login, password, rating);
+        return Objects.hash(id, role_id, login, email, password, rating, role);
     }
 
     @Override
@@ -108,6 +114,7 @@ public class User {
                 "id=" + id +
                 ", role_id=" + role_id +
                 ", login='" + login + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", rating=" + rating +
                 ", role=" + role +
