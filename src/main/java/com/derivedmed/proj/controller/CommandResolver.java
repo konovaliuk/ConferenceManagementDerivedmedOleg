@@ -3,6 +3,7 @@ package com.derivedmed.proj.controller;
 import com.derivedmed.proj.command.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
 public class CommandResolver {
@@ -31,17 +32,24 @@ public class CommandResolver {
         commands.put("addConf", new Add());
         commands.put("offerReport", new OfferByModer());
         commands.put("offersControl", new OffersControl());
+        commands.put("locale",new Locale());
     }
 
     public static CommandResolver getInstance() {
         return instance;
     }
 
-    Action getCommand(HttpServletRequest request) {
+    public Action getCommand(HttpServletRequest request, HttpServletResponse resp) {
         String commandString = request.getParameter("command");
         Action command = commands.get(commandString);
+        if (request.getParameterMap().isEmpty()) {
+            command = commands.get("main");
+        }
         if (command == null) {
             command = commands.get("wrong");
+        }
+        if ("locale".equals(commandString)) {
+            command = commands.get(command.execute(request, resp));
         }
         return command;
     }

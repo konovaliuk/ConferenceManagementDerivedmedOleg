@@ -1,15 +1,21 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="ftm" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
+    <meta content="text/html; charset=UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
           integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 </head>
 <body class="hgu">
+<c:set var="loca" value="${loc}"/>
+<ftm:setLocale value="${loca}"/>
+<fmt:setBundle basename="localization"/>
 <ul class="nav justify-content-center navbar-light bg-light" style="margin-bottom: 10px;">
     <li class="btn btn-sm btn-light">
-        <a class="nav-link" href="/main?command=main">Home</a>
+        <a class="nav-link" href="/main?command=main"><fmt:message key="menu_home"/> </a>
     </li>
     <li class="btn btn-sm btn-light">
         <a class="nav-link" href="/main?command=upcoming">Upcoming confs</a>
@@ -49,6 +55,12 @@
     </c:if>
     <li class="btn justify-content-left btn-light btn-sm">
         <a class="nav-link" href="/main?command=logOut">LogOut</a>
+    </li>
+    <li>
+        <a href="/main?locale=ru&command=locale">ru</a>
+    </li>
+    <li>
+        <a href="/main?locale=en&command=locale">en</a>
     </li>
 </ul>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"

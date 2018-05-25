@@ -26,8 +26,8 @@ public class PlainOldServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
         boolean isLogged = session.getAttribute("user") != null;
-        if ("registration".equals(req.getParameter("command"))&&!isLogged){
-            req.getRequestDispatcher("pages/registration.jsp").forward(req,resp);
+        if ("registration".equals(req.getParameter("command")) && !isLogged) {
+            req.getRequestDispatcher("pages/registration.jsp").forward(req, resp);
         }
         if (!isLogged) {
             req.getRequestDispatcher("pages/authorization.jsp").forward(req, resp);
@@ -42,8 +42,7 @@ public class PlainOldServlet extends HttpServlet {
     }
 
     private void doRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String page = resolver.getCommand(req).execute(req, resp);
+        String page = resolver.getCommand(req,resp).execute(req, resp);
         req.getRequestDispatcher(page).forward(req, resp);
-
     }
 }

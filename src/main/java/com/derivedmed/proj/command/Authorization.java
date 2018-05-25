@@ -6,6 +6,7 @@ import com.derivedmed.proj.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class Authorization implements Action {
     @Override
@@ -16,7 +17,9 @@ public class Authorization implements Action {
         boolean isValid = userService.checkUser(login, password);
         if (isValid) {
             User user = userService.getByLogin(login);
-            req.getSession().setAttribute("user", user);
+            HttpSession session = req.getSession();
+            session.setAttribute("user", user);
+            session.setAttribute("loc","en");
             return "pages/main.jsp";
         }
         req.setAttribute("message", "invalid email or password");

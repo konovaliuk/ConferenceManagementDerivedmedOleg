@@ -3,14 +3,24 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
-<servlet>
-    <servlet-name>PlainOldServlet</servlet-name>
-    <servlet-class>com.derivedmed.proj.controller.PlainOldServlet</servlet-class>
-</servlet>
+    <servlet>
+        <servlet-name>PlainOldServlet</servlet-name>
+        <servlet-class>com.derivedmed.proj.controller.PlainOldServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>PlainOldServlet</servlet-name>
         <url-pattern>/main</url-pattern>
     </servlet-mapping>
+
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>com.derivedmed.proj.controller.filter.EncodingFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/main</url-pattern>
+    </filter-mapping>
 
 </web-app>
