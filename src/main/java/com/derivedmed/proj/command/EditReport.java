@@ -14,15 +14,17 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public class EditReport implements Action {
+
+    private final ReportService reportService = ServiceFactory.getReportService();
+    private final UserService userService =ServiceFactory.getUserService();
+    private final ConfService confService =ServiceFactory.getConfService();
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         User user = (User) req.getSession().getAttribute("user");
         if (user.getRole() != Role.MODERATOR) {
             return "pages/403.jsp";
         }
-        ReportService reportService = ServiceFactory.getReportService();
-        UserService userService = ServiceFactory.getUserService();
-        ConfService confService = ServiceFactory.getConfService();
         int reportid = Integer.parseInt(req.getParameter("reportid"));
         Report report = reportService.getById(reportid);
         Timestamp time = confService.getById(report.getConf_id()).getDate();
@@ -35,13 +37,13 @@ public class EditReport implements Action {
         String reportName = req.getParameter("reportName");
         if (!"".equals(reportName)) {
             report.setReport_name(reportName);
-            reportService.update(report);
         }
         String speakerid = req.getParameter("speakerid");
         if (speakerid != null) {
             int id = Integer.parseInt(speakerid);
-            reportService.setReportToSpeaker(id, report.getId());
+            reportService.editReport(report,id);
         }
+        reportService.editReport(report,0);
         return new UpcomingConfs().execute(req, resp);
     }
 }

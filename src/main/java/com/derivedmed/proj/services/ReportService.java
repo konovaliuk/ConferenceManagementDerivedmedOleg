@@ -30,6 +30,8 @@ public interface ReportService extends Service {
 
     boolean setReportToSpeaker(int speakerId, int reportId);
 
+    boolean editReport(Report report,int id);
+
     List<Report> getReportsOfferedBySpeakerOrModer(int speakerid, boolean bySpeaker);
 
     List<ReportOfferedBySpeaker> offeredBySpeakers(boolean confirmed);

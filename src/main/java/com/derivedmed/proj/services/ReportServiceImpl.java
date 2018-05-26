@@ -5,6 +5,7 @@ import com.derivedmed.proj.dao.ReportDao;
 import com.derivedmed.proj.dao.UserDao;
 import com.derivedmed.proj.factory.DaoFactory;
 import com.derivedmed.proj.model.*;
+import com.derivedmed.proj.util.annotations.Transactional;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -54,7 +55,7 @@ public class ReportServiceImpl implements ReportService {
         ReportDao reportDao = DaoFactory.getInstance().getReportDao();
         ConfDao confDao = DaoFactory.getInstance().getConfDao();
         List<Report> reports = reportDao.getReportsByUserId(id);
-        reports = setConfNameAndDate(reports,confDao);
+        reports = setConfNameAndDate(reports, confDao);
         return reports;
     }
 
@@ -90,15 +91,28 @@ public class ReportServiceImpl implements ReportService {
         Report report = reportDao.getByID(reportId);
         Conf conf = confDao.getByID(report.getConf_id());
         Timestamp timestamp = conf.getDate();
-        return !userDao.busySpeakersByDate(timestamp).contains(user)
-                && reportDao.confirmOffer(speakerId, reportId);
+        if (userDao.busySpeakersByDate(timestamp).contains(user)) {
+            return false;
+        }
+        return reportDao.confirmOffer(speakerId, reportId);
     }
+
     @Override
-    public List<Report> getReportsOfferedBySpeakerOrModer(int speakerid, boolean bySpeaker){
+    @Transactional
+    public boolean editReport(Report report, int id) {
+        update(report);
+        if (id!=0){
+            return setReportToSpeaker(id, report.getId());
+        }
+        return true;
+    }
+
+    @Override
+    public List<Report> getReportsOfferedBySpeakerOrModer(int speakerid, boolean bySpeaker) {
         ReportDao reportDao = DaoFactory.getInstance().getReportDao();
         ConfDao confDao = DaoFactory.getInstance().getConfDao();
-        List<Report> reports = reportDao.getReportsOfferedBySpeakerOrModer(speakerid,bySpeaker);
-        reports = setConfNameAndDate(reports,confDao);
+        List<Report> reports = reportDao.getReportsOfferedBySpeakerOrModer(speakerid, bySpeaker);
+        reports = setConfNameAndDate(reports, confDao);
         return reports;
     }
 
@@ -107,8 +121,8 @@ public class ReportServiceImpl implements ReportService {
         return DaoFactory.getInstance().getReportDao().reportsOfferedBySpeakers(confirmed);
     }
 
-    private List<Report> setConfNameAndDate(List<Report> reports, ConfDao confDao){
-        for (Report report : reports){
+    private List<Report> setConfNameAndDate(List<Report> reports, ConfDao confDao) {
+        for (Report report : reports) {
             Conf conf = confDao.getByID(report.getConf_id());
             report.setConfName(conf.getName());
             report.setDate(conf.getDate());

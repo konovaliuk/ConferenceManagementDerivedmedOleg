@@ -50,7 +50,7 @@ public class UserDao implements CrudDao<User> {
         String GET_BY_ID_SQL = queryGenerator
                 .select("*")
                 .from("users")
-                .where("user_id")
+                .where("user_id","=")
                 .generate();
         Object[] values = {id};
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
@@ -72,7 +72,7 @@ public class UserDao implements CrudDao<User> {
         QueryGenerator queryGenerator = new QueryGenerator();
         String UPDATE_SQL = queryGenerator.update("users")
                 .set(new String[]{"login", "password", "role_id"})
-                .where("user_id")
+                .where("user_id","=")
                 .generate();
         Object[] values = new Object[]{user.getLogin(), user.getPassword(), user.getRole_id(), user.getId()};
         try (ConnectionProxy connection = TransactionManager.getInstance().getConnection();
@@ -160,8 +160,8 @@ public class UserDao implements CrudDao<User> {
     public List<User> getSpeakersFreeThisDate(Timestamp timestamp) {
         List<User> busyspeakers = busySpeakersByDate(timestamp);
         List<User> speakers = getSpeakersByRating();
-        List<User> result = new ArrayList<>();
-        return speakers.stream().filter(s -> !busyspeakers.contains(s)).collect(Collectors.toList());
+        return speakers.stream().filter(s -> !busyspeakers.contains(s))
+                .collect(Collectors.toList());
     }
 
     public List<User> busySpeakersByDate(Timestamp timestamp) {
@@ -178,6 +178,8 @@ public class UserDao implements CrudDao<User> {
             preparedStatement.setTimestamp(3, timestamp);
             preparedStatement.setBoolean(2, true);
             busySpeakers = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new User());
+            busySpeakers.forEach(System.out::println);
+            System.out.println();
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
         }

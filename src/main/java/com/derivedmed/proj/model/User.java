@@ -94,18 +94,15 @@ public class User {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return id == user.id &&
-                role_id == user.role_id &&
-                rating == user.rating &&
                 Objects.equals(login, user.login) &&
                 Objects.equals(email, user.email) &&
-                Objects.equals(password, user.password) &&
-                role == user.role;
+                Objects.equals(password, user.password);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, role_id, login, email, password, rating, role);
+        return Objects.hash(id, login, email, password);
     }
 
     @Override

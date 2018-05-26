@@ -42,7 +42,11 @@ public class PlainOldServlet extends HttpServlet {
     }
 
     private void doRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String page = resolver.getCommand(req,resp).execute(req, resp);
+        String command = req.getParameter("command");
+        if (req.getParameterMap().isEmpty()) {
+            command = "main";
+        }
+        String page = resolver.getCommand(command).execute(req, resp);
         req.getRequestDispatcher(page).forward(req, resp);
     }
 }

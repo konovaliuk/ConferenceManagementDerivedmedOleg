@@ -1,5 +1,7 @@
 package com.derivedmed.proj.command;
 
+import com.derivedmed.proj.controller.CommandResolver;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -11,16 +13,16 @@ public class Locale implements Action {
         String referer = req.getHeader("Referer");
         HttpSession session = req.getSession();
         session.setAttribute("loc", loc);
+        String redirectLink = String.valueOf(session.getAttribute("redirectLink"));
         if (referer.contains("=")) {
             String substring = referer.substring(referer.lastIndexOf("=") + 1);
             if ("locale".equals(substring)) {
-                substring = String.valueOf(session.getAttribute("page"));
-            } else {
-                session.setAttribute("page", substring);
+                return CommandResolver.getInstance().getCommand(redirectLink).execute(req, resp);
             }
-            return substring;
+            session.setAttribute("redirectLink", substring);
+            return CommandResolver.getInstance().getCommand(substring).execute(req, resp);
         }
-        session.setAttribute("page", "main");
-        return "main";
+        session.setAttribute("redirectLink", "main");
+        return CommandResolver.getInstance().getCommand("main").execute(req, resp);
     }
 }

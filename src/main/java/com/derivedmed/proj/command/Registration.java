@@ -24,6 +24,7 @@ public class Registration implements Action {
         if (id != 0) {
             user.setId(id);
             req.getSession().setAttribute("user", user);
+            req.getSession().setAttribute("loc","en");
             return "pages/main.jsp";
         }
         req.setAttribute("message", "sorry,current login or email already taken");

@@ -19,7 +19,7 @@ public class Conf {
     @Column(name = "conf_place")
     private String place;
 
-    @Column(name = "conf_date")
+    @Column(name = "confDate")
     private Timestamp date;
 
     private List<Report> reports;

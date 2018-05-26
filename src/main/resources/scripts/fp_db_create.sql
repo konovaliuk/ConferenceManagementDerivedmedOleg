@@ -28,7 +28,9 @@ create table reports
   report_name          varchar(22) not null,
   report_desk          varchar(255) not null,
   primary key (report_id)
-);
+)
+  CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
 
 create table roles
 (
