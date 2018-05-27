@@ -13,10 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public class OfferBySpeaker implements Action {
+
+    private final ReportService reportService =ServiceFactory.getReportService();
+    private final ConfService confService =ServiceFactory.getConfService();
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
-        ReportService reportService = ServiceFactory.getReportService();
-        ConfService confService = ServiceFactory.getConfService();
         User user = (User) req.getSession().getAttribute("user");
         if (user.getRole()!= Role.SPEAKER){
             return "pages/403.jsp";

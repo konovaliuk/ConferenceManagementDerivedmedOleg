@@ -14,15 +14,14 @@ public class Authorization implements Action {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
         UserService userService = ServiceFactory.getUserService();
-        boolean isValid = userService.checkUser(login, password);
-        if (isValid) {
-            User user = userService.getByLogin(login);
-            HttpSession session = req.getSession();
-            session.setAttribute("user", user);
-            session.setAttribute("loc","en");
-            return "pages/main.jsp";
+        User user = userService.getByLogin(login);
+        if (user == null|| !password.equals(user.getPassword())) {
+            req.setAttribute("message", "invalid email or password");
+            return "pages/authorization.jsp";
         }
-        req.setAttribute("message", "invalid email or password");
-        return "pages/authorization.jsp";
+        HttpSession session = req.getSession();
+        session.setAttribute("user", user);
+        session.setAttribute("loc", "en");
+        return "pages/main.jsp";
     }
 }

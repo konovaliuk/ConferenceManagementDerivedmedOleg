@@ -12,6 +12,9 @@ import java.util.List;
 
 public class ReportServiceImpl implements ReportService {
     private static ReportServiceImpl ourInstance = new ReportServiceImpl();
+    private final UserDao userDao =DaoFactory.getInstance().getUserDao();
+    private final ConfDao confDao =DaoFactory.getInstance().getConfDao();
+    private final ReportDao reportDao =DaoFactory.getInstance().getReportDao();
 
     public static ReportServiceImpl getInstance() {
         return ourInstance;
@@ -52,8 +55,6 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<Report> getByUserId(int id) {
-        ReportDao reportDao = DaoFactory.getInstance().getReportDao();
-        ConfDao confDao = DaoFactory.getInstance().getConfDao();
         List<Report> reports = reportDao.getReportsByUserId(id);
         reports = setConfNameAndDate(reports, confDao);
         return reports;
@@ -66,7 +67,6 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public boolean offerReport(int speakerId, int reportId, Role role) {
-        ReportDao reportDao = DaoFactory.getInstance().getReportDao();
         boolean result = false;
         if (role == Role.MODERATOR) {
             result = reportDao.offerReport(speakerId, reportId, false);
@@ -79,14 +79,11 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public boolean confirmOffer(int userId, int reportId) {
-        return DaoFactory.getInstance().getReportDao().confirmOffer(userId, reportId);
+        return reportDao.confirmOffer(userId, reportId);
     }
 
     @Override
     public synchronized boolean setReportToSpeaker(int speakerId, int reportId) {
-        UserDao userDao = DaoFactory.getInstance().getUserDao();
-        ConfDao confDao = DaoFactory.getInstance().getConfDao();
-        ReportDao reportDao = DaoFactory.getInstance().getReportDao();
         User user = userDao.getByID(speakerId);
         Report report = reportDao.getByID(reportId);
         Conf conf = confDao.getByID(report.getConf_id());
@@ -104,13 +101,11 @@ public class ReportServiceImpl implements ReportService {
         if (id!=0){
             return setReportToSpeaker(id, report.getId());
         }
-        return true;
+        return false;
     }
 
     @Override
     public List<Report> getReportsOfferedBySpeakerOrModer(int speakerid, boolean bySpeaker) {
-        ReportDao reportDao = DaoFactory.getInstance().getReportDao();
-        ConfDao confDao = DaoFactory.getInstance().getConfDao();
         List<Report> reports = reportDao.getReportsOfferedBySpeakerOrModer(speakerid, bySpeaker);
         reports = setConfNameAndDate(reports, confDao);
         return reports;

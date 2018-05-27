@@ -25,6 +25,7 @@
     <div class="form-group w-25 p-3" style="margin: auto;">
         <button type="submit" class="btn btn-light">Edit</button>
     </div>
+    <p style="color: red;" class="text-center">${requestScope.message}</p>
 </form>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

@@ -13,10 +13,10 @@
             <input type="email" class="form-control" placeholder="Email" required="required" name="email">
         </div>
         <div class="form-group  w-25 p-3" style="margin: auto;">
-            <input type="text" class="form-control" placeholder="Username" required="required" name="username" pattern="^[A-Za-z0-9\s]+$">
+            <input type="text" class="form-control" placeholder="Username" required="required" name="username" pattern="^[а-яА-ЯёЁa-zA-Z0-9\s{0,1}]+$">
         </div>
         <div class="form-group  w-25 p-3" style="margin: auto;">
-            <input type="password" class="form-control" placeholder="Password" required="required" name="password" pattern="^[A-Za-z0-9\s]">
+            <input type="password" class="form-control" placeholder="Password" required="required" name="password" pattern="^[a-zA-Z0-9]+$">
         </div>
         <div class="form-group w-25 p-3" style="margin: auto;">
             <button type="submit" class="btn btn-light">Register</button>
@@ -31,7 +31,7 @@
         integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
         crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
-        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
-        crossorigin="anonymous"></script>
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 </body>
+
 </html>

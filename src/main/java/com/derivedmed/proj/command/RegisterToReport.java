@@ -11,11 +11,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class RegisterToReport implements Action {
+
+    private final UserService userService =ServiceFactory.getUserService();
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         User user = (User) req.getSession().getAttribute("user");
         int user_id = user.getId();
-        UserService userService = ServiceFactory.getUserService();
         int report_id = Integer.parseInt(req.getParameter("reportId"));
         if (userService.registerUserToReport(user_id, report_id)) {
             List<Conf> confs = ServiceFactory.getConfService().getUpcoming(user);

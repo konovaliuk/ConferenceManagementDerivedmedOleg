@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public class Ratings implements Action {
+
+    private final UserService userService =ServiceFactory.getUserService();
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
-        UserService userService = ServiceFactory.getUserService();
         List<User> speakers = userService.getSpeakersByRating();
         req.setAttribute("ratings",speakers);
         return "pages/ratings.jsp";

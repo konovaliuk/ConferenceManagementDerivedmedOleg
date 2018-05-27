@@ -61,10 +61,10 @@
                                                 value="${report.date}"/>
                             </div>
                             <div class="col-3">
-                                <c:if test="${report.speakerName==null}">
+                                <c:if test="${!report.speakerName.equals(user.login)}">
                                     <button type="submit" class="btn btn-light">confirm offer</button>
                                 </c:if>
-                                <c:if test="${report.speakerName!=null}">
+                                <c:if test="${report.speakerName.equals(user.login)}">
                                     <c:out value="confirmed!"/>
                                 </c:if>
                             </div>

@@ -12,11 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Past implements Action {
+
+    private final UserService userService =ServiceFactory.getUserService();
+    private final ConfService confService =ServiceFactory.getConfService();
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         User user = (User) req.getSession().getAttribute("user");
-        UserService userService = ServiceFactory.getUserService();
-        ConfService confService = ServiceFactory.getConfService();
         List<Conf> confs = confService.getPast();
         HashMap<Integer, String> isUserRegisteredForReport = userService.isUserRegistered(user.getId(), confs);
         isUserRegisteredForReport.entrySet().forEach(entry->{

@@ -1,5 +1,6 @@
 package com.derivedmed.proj.services;
 
+import com.derivedmed.proj.dao.UserDao;
 import com.derivedmed.proj.factory.DaoFactory;
 import com.derivedmed.proj.factory.ServiceFactory;
 import com.derivedmed.proj.model.Conf;
@@ -14,6 +15,8 @@ import java.util.List;
 
 public class UserServiceImpl implements UserService {
     private static UserServiceImpl ourInstance = new UserServiceImpl();
+    private final UserDao userDao = DaoFactory.getInstance().getUserDao();
+    private final ReportService reportService =ServiceFactory.getReportService();
 
     public static UserServiceImpl getInstance() {
         return ourInstance;
@@ -24,57 +27,56 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int createUser(User user) {
-        return DaoFactory.getInstance().getUserDao().create(user);
+        return userDao.create(user);
     }
 
     @Override
     public User getUserByID(int id) {
-        return DaoFactory.getInstance().getUserDao().getByID(id);
+        return userDao.getByID(id);
     }
 
     @Override
     public List<User> getAll() {
-        return DaoFactory.getInstance().getUserDao().getAll();
+        return userDao.getAll();
     }
 
     @Override
     public boolean clearAll() {
-        return DaoFactory.getInstance().getUserDao().clearAll();
+        return userDao.clearAll();
     }
 
     @Override
     public boolean updateUser(User user) {
-        return DaoFactory.getInstance().getUserDao().update(user);
+        return userDao.update(user);
     }
 
     @Override
     public boolean delete(int id) {
-        return DaoFactory.getInstance().getUserDao().delete(id);
+        return userDao.delete(id);
     }
 
     @Override
     public boolean registerUserToReport(int userId, int reportId) {
-        return DaoFactory.getInstance().getUserDao().registerUserToReport(userId, reportId);
+        return userDao.registerUserToReport(userId, reportId);
     }
 
     @Override
     public List<User> getSpeakersByRating() {
-        return DaoFactory.getInstance().getUserDao().getSpeakersByRating();
+        return userDao.getSpeakersByRating();
     }
 
     @Override
     public boolean checkUser(String login, String password) {
-        return DaoFactory.getInstance().getUserDao().authUser(login, password);
+        return userDao.authUser(login, password);
     }
 
     @Override
     public User getByLogin(String login) {
-        return DaoFactory.getInstance().getUserDao().getByLogin(login);
+        return userDao.getByLogin(login);
     }
 
     @Override
     public HashMap<Integer, String> isUserRegistered(int userId, List<Conf> confs) {
-        ReportService reportService = ServiceFactory.getReportService();
         List<Report> usersReports = reportService.getByUserId(userId);
         List<Integer> reportsIds = new ArrayList<>();
         for (Report r : usersReports) {
@@ -95,7 +97,6 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public HashMap<Integer, String> isUserVoted(int userId, List<Conf> confs) {
-        ReportService reportService = ServiceFactory.getReportService();
         List<Integer> votedReports = reportService.votedByUser(userId);
         HashMap<Integer, String> voted = new HashMap<>();
         for (Conf conf : confs) {
@@ -113,11 +114,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public boolean vote(int user_id, int report_id, int rating){
-        return DaoFactory.getInstance().getUserDao().vote(user_id,report_id,rating);
+        return userDao.vote(user_id,report_id,rating);
     }
 
     @Override
     public List<User> getFreeThisDate(Timestamp timestamp){
-        return DaoFactory.getInstance().getUserDao().getSpeakersFreeThisDate(timestamp);
+        return userDao.getSpeakersFreeThisDate(timestamp);
     }
 }

@@ -12,10 +12,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Vote implements Action {
+
+    private final UserService userService =ServiceFactory.getUserService();
+    private final ConfService confService =ServiceFactory.getConfService();
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
-        UserService userService = ServiceFactory.getUserService();
-        ConfService confService = ServiceFactory.getConfService();
         User user = (User) req.getSession().getAttribute("user");
         int rating = Integer.parseInt(req.getParameter("rating"));
         String reportId = req.getParameter("reportId");

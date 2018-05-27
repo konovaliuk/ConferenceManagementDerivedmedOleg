@@ -59,7 +59,7 @@ public class ConfServiceImpl implements ConfService {
                 .filter(conf -> conf.getDate().getTime() > new Date().getTime())
                 .collect(Collectors.toList());
 
-        if (user.getRole() == Role.MODERATOR || user.getRole() == Role.ADMINISTRATOR/* || user.getRole() == Role.SPEAKER*/) {
+        if (user.getRole() == Role.MODERATOR || user.getRole() == Role.ADMINISTRATOR) {
             return confs;
         }
         List<Conf> result = new ArrayList<>();
@@ -88,11 +88,11 @@ public class ConfServiceImpl implements ConfService {
 
     @Override
     public boolean delete(int id) {
-        return DaoFactory.getInstance().getConfDao().delete(id);
+        return confDao.delete(id);
     }
 
     @Override
     public boolean deleteAll() {
-        return DaoFactory.getInstance().getConfDao().clearAll();
+        return confDao.clearAll();
     }
 }

@@ -10,10 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public class MyConfs implements Action {
+
+    private final ReportService reportService =ServiceFactory.getReportService();
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         User user = (User) req.getSession().getAttribute("user");
-        ReportService reportService = ServiceFactory.getReportService();
         List<Report> reports = reportService.getByUserId(user.getId());
         req.setAttribute("reports", reports);
         return "pages/myconfs.jsp";

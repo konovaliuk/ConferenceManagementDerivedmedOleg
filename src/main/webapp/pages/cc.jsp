@@ -29,6 +29,7 @@
     <div class="form-group w-25 p-3" style="margin: auto;">
         <button type="submit" class="btn btn-light">add</button>
     </div>
+    <p style="color: red;" class="text-center">${requestScope.reportMessage}</p>
 </form>
 <form action="/main" method="post" id="2">
     <h2 class="text-center">Add conference</h2>
@@ -47,6 +48,7 @@
     <div class="form-group w-25 p-3" style="margin: auto;">
         <button type="submit" class="btn btn-light">add</button>
     </div>
+    <p style="color: red;" class="text-center">${requestScope.message}</p>
 </form>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
