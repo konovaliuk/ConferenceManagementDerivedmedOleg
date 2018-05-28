@@ -37,22 +37,23 @@ public class ResultSetParser {
                     if (f.isAnnotationPresent(Column.class)) {
                         String name = f.getAnnotation(Column.class).name();
                         f.setAccessible(true);
-                        f.set(resultUnit, rs.getObject(name));
+                        Object object = rs.getObject(name);
+                        f.set(resultUnit, object);
                     }
                 }
                 result.add(resultUnit);
                 resultUnit = (T) clazz.getConstructor().newInstance();
             }
-        }catch (SQLException e){
-            LOGGER.error("SQL exception from parser",e);
+        } catch (SQLException e) {
+            LOGGER.error("SQL exception from parser", e);
         } catch (NoSuchMethodException e) {
-            LOGGER.error("No such method!",e);
+            LOGGER.error("No such method!", e);
         } catch (InstantiationException e) {
-            LOGGER.error("Instantiation exception!",e);
+            LOGGER.error("Instantiation exception!", e);
         } catch (IllegalAccessException e) {
-            LOGGER.error("Can`t access to field",e);
+            LOGGER.error("Can`t access to field", e);
         } catch (InvocationTargetException e) {
-            LOGGER.error("Can`t invoke method",e);
+            LOGGER.error("Can`t invoke method", e);
         }
         return result;
     }

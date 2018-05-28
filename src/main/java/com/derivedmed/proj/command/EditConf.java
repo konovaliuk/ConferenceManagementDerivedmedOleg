@@ -32,16 +32,20 @@ public class EditConf implements Action {
         if (req.getMethod().equals("GET")) {
             return "pages/editconf.jsp";
         }
-        String confName = req.getParameter("confName").replaceAll("\\s{2,}"," ");
-        String confPlace = req.getParameter("confPlace").replaceAll("\\s{2,}"," ");
+        String confName = req.getParameter("confName").replaceAll("\\s{2,}", " ");
+        String confPlace = req.getParameter("confPlace").replaceAll("\\s{2,}", " ");
         String confsDate = req.getParameter("confDate");
         if (!checkField(confName) || !checkField(confPlace)) {
             req.setAttribute("message", "fields may contains only letters and numbers");
             return "pages/editconf.jsp";
         }
-        if (StringUtils.isNoneBlank(confName) && StringUtils.isNoneBlank(confPlace) && StringUtils.isNoneBlank(confsDate)) {
+        if (StringUtils.isNoneBlank(confName)) {
             conf.setName(confName);
+        }
+        if (StringUtils.isNoneBlank(confPlace)) {
             conf.setPlace(confPlace);
+        }
+        if (StringUtils.isNoneBlank(confsDate)) {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
             LocalDateTime localDateTime = LocalDateTime.parse(confsDate, dateTimeFormatter);
             Timestamp confDate = Timestamp.valueOf(localDateTime);
@@ -50,17 +54,16 @@ public class EditConf implements Action {
                 return "pages/editconf.jsp";
             }
             conf.setDate(confDate);
-            confService.update(conf);
-            req.setAttribute("confs", confService.getUpcoming(user));
-            return new UpcomingConfs().execute(req, resp);
+
         }
-        req.setAttribute("message", "please fill all fields");
-        return "pages/editconf.jsp";
+        confService.update(conf);
+        req.setAttribute("confs", confService.getUpcoming(user));
+        return new UpcomingConfs().execute(req, resp);
     }
 
     private boolean checkField(String value) {
         Pattern p = Pattern.compile("^[а-яА-ЯёЁa-zA-Z0-9\\s*]+$");
         Matcher m = p.matcher(value);
-        return m.matches();
+        return m.matches() || StringUtils.isBlank(value);
     }
 }

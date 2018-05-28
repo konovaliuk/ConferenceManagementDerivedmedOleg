@@ -66,7 +66,7 @@ public class UserDao implements CrudDao<User> {
             ArrayList<User> resultList = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), user);
             if (!resultList.isEmpty()) {
                 user = resultList.get(0);
-                user.setRole(getRole(user.getId()));
+                user.setRole(getRole(user.getRole_id()));
             }
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);

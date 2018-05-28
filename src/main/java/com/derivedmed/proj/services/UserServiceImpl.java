@@ -14,12 +14,15 @@ import java.util.HashMap;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
-    private static UserServiceImpl ourInstance = new UserServiceImpl();
+    private static UserServiceImpl instance;
     private final UserDao userDao = DaoFactory.getInstance().getUserDao();
-    private final ReportService reportService =ServiceFactory.getReportService();
+    private static final ReportService reportService = ServiceFactory.getReportService();
 
     public static UserServiceImpl getInstance() {
-        return ourInstance;
+        if (instance == null) {
+            instance = new UserServiceImpl();
+        }
+        return instance;
     }
 
     private UserServiceImpl() {
@@ -79,10 +82,11 @@ public class UserServiceImpl implements UserService {
     public HashMap<Integer, String> isUserRegistered(int userId, List<Conf> confs) {
         List<Report> usersReports = reportService.getByUserId(userId);
         List<Integer> reportsIds = new ArrayList<>();
+        HashMap<Integer, String> isRegistered = new HashMap<>();
+
         for (Report r : usersReports) {
             reportsIds.add(r.getId());
         }
-        HashMap<Integer, String> isRegistered = new HashMap<>();
         for (Conf conf : confs) {
             for (Report report : conf.getReports()) {
                 int id = report.getId();
@@ -93,8 +97,10 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
+
         return isRegistered;
     }
+
     @Override
     public HashMap<Integer, String> isUserVoted(int userId, List<Conf> confs) {
         List<Integer> votedReports = reportService.votedByUser(userId);
@@ -113,12 +119,12 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public boolean vote(int user_id, int report_id, int rating){
-        return userDao.vote(user_id,report_id,rating);
+    public boolean vote(int user_id, int report_id, int rating) {
+        return userDao.vote(user_id, report_id, rating);
     }
 
     @Override
-    public List<User> getFreeThisDate(Timestamp timestamp){
+    public List<User> getFreeThisDate(Timestamp timestamp) {
         return userDao.getSpeakersFreeThisDate(timestamp);
     }
 }

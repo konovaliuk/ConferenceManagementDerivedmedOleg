@@ -10,11 +10,6 @@ import java.util.Arrays;
 public class ServiceFactory {
 
     private static ServiceFactory ourInstance = new ServiceFactory();
-    private static UserService userService = getService(UserServiceImpl.getInstance());
-    private static ReportService reportService = getService(ReportServiceImpl.getInstance());
-    private static ConfService confService = getService(ConfServiceImpl.getInstance());
-    private static NotificationService notificationService = getService(NotificationServiceImpl.getInstance());
-
     public static ServiceFactory getInstance() {
         return ourInstance;
     }
@@ -31,23 +26,23 @@ public class ServiceFactory {
         return t;
     }
 
-    public static ServiceFactory getOurInstance() {
-        return ourInstance;
-    }
-
     public static NotificationService getNotificationService() {
+        NotificationService notificationService = getService(NotificationServiceImpl.getInstance());
         return notificationService;
     }
 
     public static UserService getUserService() {
+        UserService userService = getService(UserServiceImpl.getInstance());
         return userService;
     }
 
     public static ReportService getReportService() {
+        ReportService reportService = getService(ReportServiceImpl.getInstance());
         return reportService;
     }
 
     public static ConfService getConfService() {
+        ConfService confService = getService(ConfServiceImpl.getInstance());
         return confService;
     }
 

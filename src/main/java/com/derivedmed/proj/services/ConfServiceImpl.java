@@ -1,8 +1,8 @@
 package com.derivedmed.proj.services;
 
 import com.derivedmed.proj.dao.ConfDao;
-import com.derivedmed.proj.dao.ReportDao;
 import com.derivedmed.proj.factory.DaoFactory;
+import com.derivedmed.proj.factory.ServiceFactory;
 import com.derivedmed.proj.model.Conf;
 import com.derivedmed.proj.model.Report;
 import com.derivedmed.proj.model.Role;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class ConfServiceImpl implements ConfService {
     private static ConfServiceImpl ourInstance = new ConfServiceImpl();
     private final ConfDao confDao = DaoFactory.getInstance().getConfDao();
-    private final ReportDao reportDao = DaoFactory.getInstance().getReportDao();
+    private final ReportService reportService =ServiceFactory.getReportService();
 
     public static ConfServiceImpl getInstance() {
         return ourInstance;
@@ -43,7 +43,7 @@ public class ConfServiceImpl implements ConfService {
     @Override
     public List<Conf> getAll() {
         List<Conf> confs = confDao.getAll();
-        List<Report> confirmed = reportDao.getAll();
+        List<Report> confirmed = reportService.getAll();
         for (Conf conf : confs) {
             conf.setReports(confirmed
                     .stream()
@@ -59,7 +59,7 @@ public class ConfServiceImpl implements ConfService {
                 .filter(conf -> conf.getDate().getTime() > new Date().getTime())
                 .collect(Collectors.toList());
 
-        if (user.getRole() == Role.MODERATOR || user.getRole() == Role.ADMINISTRATOR) {
+        if (user.getRole() == Role.ADMINISTRATOR || user.getRole() == Role.MODERATOR) {
             return confs;
         }
         List<Conf> result = new ArrayList<>();

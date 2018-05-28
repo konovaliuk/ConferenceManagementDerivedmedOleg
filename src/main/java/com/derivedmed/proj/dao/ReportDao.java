@@ -3,6 +3,7 @@ package com.derivedmed.proj.dao;
 import com.derivedmed.proj.model.MailData;
 import com.derivedmed.proj.model.Report;
 import com.derivedmed.proj.model.ReportOfferedBySpeaker;
+import com.derivedmed.proj.model.ReportWithSpeaker;
 import com.derivedmed.proj.util.PreparedStatmentCompilier;
 import com.derivedmed.proj.util.rsparser.ResultSetParser;
 import org.apache.commons.lang3.time.DateUtils;
@@ -43,6 +44,7 @@ public class ReportDao implements CrudDao<Report> {
             "join users_reports ur on u.user_id = ur.user_id where report_id = ? and active_speaker = ?";
     private static final String isSpeakerExistSql = "select* from users_reports where user_id =? and report_id=?";
     private static final String updateOrInsertSql = "select * from users_reports where user_id = ? and report_id = ?";
+    private final ResultSetParser resultSetParser = ResultSetParser.getInstance();
 
 
     @Override
@@ -67,7 +69,7 @@ public class ReportDao implements CrudDao<Report> {
         List<Report> report = new ArrayList<>();
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = PreparedStatmentCompilier.setValues(connectionProxy.prepareStatement(getByIdSql), new Object[]{id})) {
-            report = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new Report());
+            report = resultSetParser.parse(preparedStatement.executeQuery(), new Report());
             if (!report.isEmpty()) {
                 return report.get(0);
             }
@@ -107,11 +109,7 @@ public class ReportDao implements CrudDao<Report> {
         List<Report> resultList = new ArrayList<>();
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = connectionProxy.prepareStatement(getAllSql)) {
-            resultList = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new Report());
-            if (!resultList.isEmpty()) {
-                resultList = setSpeakersToReport(connectionProxy, resultList);
-                return resultList;
-            }
+            resultList = resultSetParser.parse(preparedStatement.executeQuery(), new Report());
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
         }
@@ -130,15 +128,27 @@ public class ReportDao implements CrudDao<Report> {
         return true;
     }
 
+    public List<ReportWithSpeaker> getReportsWithSpeakers() {
+        String sql = " select login, report_id from users u " +
+                "join users_reports ur on u.user_id = ur.user_id " +
+                "where active_speaker = ?";
+        List<ReportWithSpeaker> reports = new ArrayList<>();
+        try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
+             PreparedStatement preparedStatement = PreparedStatmentCompilier.setValues(connectionProxy.prepareStatement(sql), new Object[]{true})) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            reports = resultSetParser.parse(resultSet, new ReportWithSpeaker());
+
+        } catch (SQLException e) {
+            LOGGER.error(e);
+        }
+        return reports;
+    }
+
     public List<Report> getReportsByUserId(int id) {
         List<Report> reports = new ArrayList<>();
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = PreparedStatmentCompilier.setValues(connectionProxy.prepareStatement(getReportsByUserIdSql), new Object[]{id})) {
-            reports = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new Report());
-            if (!reports.isEmpty()) {
-                reports = setSpeakersToReport(connectionProxy, reports);
-                return reports;
-            }
+            reports = resultSetParser.parse(preparedStatement.executeQuery(), new Report());
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
         }
@@ -185,8 +195,7 @@ public class ReportDao implements CrudDao<Report> {
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = PreparedStatmentCompilier.setValues(connectionProxy.prepareStatement(offeredBySpeakerSql),
                      new Object[]{userid, bySpeaker, !bySpeaker})) {
-            reports = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new Report());
-            reports = setSpeakersToReport(connectionProxy, reports);
+            reports = resultSetParser.parse(preparedStatement.executeQuery(), new Report());
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
         }
@@ -214,7 +223,7 @@ public class ReportDao implements CrudDao<Report> {
         List<ReportOfferedBySpeaker> reportOfferedBySpeakers = new ArrayList<>();
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = PreparedStatmentCompilier.setValues(connectionProxy.prepareStatement(reportsOfferedBySpeakersSql), new Object[]{3, true, confirmed, confirmed})) {
-            reportOfferedBySpeakers = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new ReportOfferedBySpeaker());
+            reportOfferedBySpeakers = resultSetParser.parse(preparedStatement.executeQuery(), new ReportOfferedBySpeaker());
             if (!reportOfferedBySpeakers.isEmpty()) {
                 return reportOfferedBySpeakers;
             }
@@ -230,7 +239,7 @@ public class ReportDao implements CrudDao<Report> {
         Timestamp nextDay = new Timestamp(time.getTime() + oneDayMillis);
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = PreparedStatmentCompilier.setValues(connectionProxy.prepareStatement(dataForNotificationsSql), new Object[]{time, nextDay})) {
-            result = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new MailData());
+            result = resultSetParser.parse(preparedStatement.executeQuery(), new MailData());
             if (!result.isEmpty()) {
                 return result;
             }
@@ -240,22 +249,6 @@ public class ReportDao implements CrudDao<Report> {
         }
         return result;
     }
-
-    private List<Report> setSpeakersToReport(ConnectionProxy connectionProxy, List<Report> result) {//TODO DUDOS
-        try (PreparedStatement preparedStatement = connectionProxy.prepareStatement(setSpeakersToReportsSql)) {
-            for (Report report : result) {
-                PreparedStatmentCompilier.setValues(preparedStatement, new Object[]{report.getId(), true});
-                ResultSet resultSet = preparedStatement.executeQuery();
-                if (resultSet.next()) {
-                    report.setSpeakerName(resultSet.getString(1));
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error(SQL_EXCEPTION, e);
-        }
-        return result;
-    }
-
 
     private boolean isSpeakerReportExist(int userid, int reportid) {
         boolean exist = false;
@@ -273,7 +266,7 @@ public class ReportDao implements CrudDao<Report> {
         try (PreparedStatement preparedStatement = PreparedStatmentCompilier.setValues(connectionProxy.prepareStatement(updateOrInsertSql), new Object[]{speakerId, reportId});
              ResultSet resultSet = preparedStatement.executeQuery()) {
             if (!resultSet.next()) {
-                return "insert into users_reports (active_speaker, by_speaker, by_moder, confirmed, user_id, report_id";
+                return "insert into users_reports (active_speaker, by_speaker, by_moder, confirmed, user_id, report_id) values(?,?,?,?,?,?)";
             }
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);

@@ -35,6 +35,13 @@ public class Conf {
     public Conf() {
     }
 
+    public Conf(int id, String name, String place, Timestamp date) {
+        this.id = id;
+        this.name = name;
+        this.place = place;
+        this.date = date;
+    }
+
     public Conf(String name, String place, Timestamp date) {
         this.name = name;
         this.place = place;

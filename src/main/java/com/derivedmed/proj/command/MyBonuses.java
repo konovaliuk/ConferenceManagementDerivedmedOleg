@@ -16,10 +16,11 @@ public class MyBonuses implements Action {
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         User user = (User) req.getSession().getAttribute("user");
         if (user.getRole()!= Role.SPEAKER){
-            user = userService.getUserByID(user.getId());
-            req.setAttribute("user",user);
             return "pages/403.jsp";
         }
+        user = userService.getUserByID(user.getId());
+        req.setAttribute("user",user);
+        System.out.println(user.getRole());
         return "pages/mybonuses.jsp";
     }
 }

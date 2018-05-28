@@ -50,12 +50,25 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<Report> getAll() {
-        return DaoFactory.getInstance().getReportDao().getAll();
+        List<Report> all = reportDao.getAll();
+        return setSpeakersToReports(all);
+    }
+
+    private List<Report> setSpeakersToReports(List<Report> reports){
+        List<ReportWithSpeaker> withSpeakers = reportDao.getReportsWithSpeakers();
+        for (ReportWithSpeaker withSpeaker : withSpeakers){
+            for (Report allReport : reports){
+                if (allReport.getId() == withSpeaker.getReportId()){
+                    allReport.setSpeakerName(withSpeaker.getSpeakerName());
+                }
+            }
+        }
+        return reports;
     }
 
     @Override
     public List<Report> getByUserId(int id) {
-        List<Report> reports = reportDao.getReportsByUserId(id);
+        List<Report> reports = setSpeakersToReports(reportDao.getReportsByUserId(id));
         reports = setConfNameAndDate(reports, confDao);
         return reports;
     }
@@ -106,7 +119,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<Report> getReportsOfferedBySpeakerOrModer(int speakerid, boolean bySpeaker) {
-        List<Report> reports = reportDao.getReportsOfferedBySpeakerOrModer(speakerid, bySpeaker);
+        List<Report> reports = setSpeakersToReports(reportDao.getReportsOfferedBySpeakerOrModer(speakerid, bySpeaker));
         reports = setConfNameAndDate(reports, confDao);
         return reports;
     }
@@ -116,7 +129,7 @@ public class ReportServiceImpl implements ReportService {
         return DaoFactory.getInstance().getReportDao().reportsOfferedBySpeakers(confirmed);
     }
 
-    private List<Report> setConfNameAndDate(List<Report> reports, ConfDao confDao) {
+    private List<Report> setConfNameAndDate(List<Report> reports, ConfDao confDao) {//TODO DUDOS2
         for (Report report : reports) {
             Conf conf = confDao.getByID(report.getConf_id());
             report.setConfName(conf.getName());

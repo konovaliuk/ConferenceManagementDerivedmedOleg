@@ -26,6 +26,16 @@ public class Report {
 
     private Timestamp date;
 
+
+    public Report(int id, int conf_id, String report_name, String report_description, String confName, Timestamp date) {
+        this.id = id;
+        this.conf_id = conf_id;
+        this.report_name = report_name;
+        this.report_description = report_description;
+        this.confName = confName;
+        this.date = date;
+    }
+
     public Report() {
     }
 
