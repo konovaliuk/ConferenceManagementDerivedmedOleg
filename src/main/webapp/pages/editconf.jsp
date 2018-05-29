@@ -8,9 +8,11 @@
           integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 </head>
 <body>
-<%@include file="menu.jsp" %>
+<jsp:include page="menu.jsp"/>
+<fmt:setLocale value="${loc}"/>
+<fmt:setBundle basename="localization"/>
 <form action="/main" method="post">
-    <h2 class="text-center">Edit conference</h2>
+    <h2 class="text-center"><fmt:message key="editconf"/> </h2>
     <input type="hidden" name="command" value ="editConf"/>
     <input type="hidden" name="confid" value="${conf.id}">
     <div class="form-group  w-25 p-3" style="margin: auto;">

@@ -8,10 +8,12 @@
           integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 </head>
 <body>
-<%@include file="menu.jsp" %>
+<jsp:include page="menu.jsp"/>
+<fmt:setLocale value="${loc}"/>
+<fmt:setBundle basename="localization"/>
 <div style="text-align: center;">
     <form action="/main" method="post" class="w-25 text-center" style="margin: auto;">
-        <h2 class="text-center">Edit report</h2>
+        <h2 class="text-center"><fmt:message key="editreport"/> </h2>
         <input type="hidden" name="command" value="editReport"/>
         <input type="hidden" name="reportid" value="${report.id}">
         <div class="form-group" >

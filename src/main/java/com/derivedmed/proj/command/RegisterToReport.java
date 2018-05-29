@@ -7,8 +7,8 @@ import com.derivedmed.proj.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RegisterToReport implements Action {
 
@@ -21,7 +21,7 @@ public class RegisterToReport implements Action {
         int report_id = Integer.parseInt(req.getParameter("reportId"));
         if (userService.registerUserToReport(user_id, report_id)) {
             List<Conf> confs = ServiceFactory.getConfService().getUpcoming(user);
-            HashMap<Integer, String> isUserRegisteredForReport = userService.isUserRegistered(user.getId(), confs);
+            Map<Integer, String> isUserRegisteredForReport = userService.isUserRegistered(user.getId(), confs);
             req.getSession().setAttribute("isRegistered", isUserRegisteredForReport);
             req.setAttribute("confs", confs);
             return "pages/upcoming.jsp";

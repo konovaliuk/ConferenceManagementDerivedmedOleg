@@ -8,13 +8,15 @@
           integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 </head>
 <body>
-<%@include file="menu.jsp" %>
+<jsp:include page="menu.jsp"/>
+<fmt:setLocale value="${loc}"/>
+<fmt:setBundle basename="localization"/>
 <ul class="list-group w-75" style="margin: auto; padding-top: 5px;">
     <c:forEach var="conf" items="${confs}">
         <c:if test="${'MODERATOR'==user.role}">
             <li class="text-left list-group-item">
                 <input type="hidden" name="confid" value="${conf.id}">
-                <a href="/main?command=editConf&confid=<c:out value="${conf.id}"/>" class="btn btn-dark">edit</a>
+                <a href="/main?command=editConf&confid=<c:out value="${conf.id}"/>" class="btn btn-dark"><fmt:message key="upcoming_edit"/> </a>
             </li>
         </c:if>
         <li class="list-group-item list-group-item-info text-center"><h4><c:out value="${conf.name}"/></h4>
@@ -27,10 +29,11 @@
             <ul class="list-group">
                 <c:forEach var="report" items="${conf.reports}">
                     <li class="list-group-item">
-                        <form method="post" action="/main">
-                            <input type="hidden" name="command" value="regToRep">
-                            <input type="hidden" name="reportId" value="${report.id}">
-                            <div class="row">
+                        <div class="row">
+                            <form method="post" class="col-10" action="/main">
+                                <input type="hidden" name="command" value="regToRep">
+                                <input type="hidden" name="reportId" value="${report.id}">
+                                <div class="row">
                                 <div class="col-8">
                                     <p><c:out value="${report.report_name}"/></p>
                                     <p>Speaker : <c:out value="${report.speakerName}"/></p>
@@ -38,27 +41,38 @@
                                 <div class="col-4" style="text-align: right;">
                                     <p>
                                         <button class="btn btn-dark btn-sm" <c:out
-                                                value="${isRegistered.get(report.id)}"/>>Register
+                                                value="${isRegistered.get(report.id)}"/>><fmt:message key="upcoming_reg"/>
                                         </button>
                                     </p>
                                     <c:if test="${'MODERATOR'==user.role}">
                                         <input type="hidden" name="reportid" value="${report.id}">
                                         <p>
                                             <a class="btn btn-light btn-sm"
-                                               href="/main?command=editReport&reportid=<c:out value="${report.id}"/>"><c:out
-                                                    value="edit"/></a>
+                                               href="/main?command=editReport&reportid=<c:out value="${report.id}"/>"><fmt:message key="upcoming_edit"/> </a>
                                         </p>
                                         <p>
 
                                             <a class="btn btn-light btn-sm"
-                                               href="/main?command=offerReport&reportid=<c:out value="${report.id}"/>"><c:out
-                                                    value="offerToSpeaker"/></a>
+                                               href="/main?command=offerReport&reportid=<c:out value="${report.id}"/>"><fmt:message key="upcoming_offer"/> </a>
                                         </p>
                                     </c:if>
 
                                 </div>
+                                </div>
+                            </form>
+
+                            <div class="col-2">
+                                <form method="get" action="/main">
+                                    <input type="hidden" name="reportId" value="${report.id}">
+                                    <input type="hidden" name="command" value="deleteReport">
+                                    <c:if test="${'MODERATOR'==user.role}">
+                                    <button class="btn btn-default"><img src="../img/delete.png" height="20px"
+                                                                         width="20px"></button>
+                                    </c:if>
+                                </form>
                             </div>
-                        </form>
+                        </div>
+
                     </li>
                 </c:forEach>
             </ul>

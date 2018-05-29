@@ -20,7 +20,6 @@ public class MyBonuses implements Action {
         }
         user = userService.getUserByID(user.getId());
         req.setAttribute("user",user);
-        System.out.println(user.getRole());
         return "pages/mybonuses.jsp";
     }
 }

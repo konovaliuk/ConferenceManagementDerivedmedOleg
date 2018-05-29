@@ -8,7 +8,9 @@
           integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 </head>
 <body>
-<%@include file="menu.jsp" %>
+<jsp:include page="menu.jsp"/>
+<fmt:setLocale value="${loc}"/>
+<fmt:setBundle basename="localization"/>
 <ul class="list-group w-75" style="margin: auto; padding-top: 5px;">
     <c:forEach var="conf" items="${confs}">
         <li class="list-group-item list-group-item-info text-center"><h4><c:out value="${conf.name}"/></h4></li>
@@ -24,14 +26,14 @@
                             <input type="hidden" name="command" value="vote">
                             <input type="hidden" name="reportId" value="${report.id}">
                             <div class="row">
-                                <div class="col-8">
+                                <div class="col-7">
                                     <p><c:out value="${report.report_name}"/></p>
                                     <p>Speaker : <c:out value="${report.speakerName}"/></p>
                                 </div>
-                                <div class="col-2" style="text-align: right;">
+                                <div class="col-1" style="text-align: right;">
                                     Vote :
                                 </div>
-                                <div class="col-1">
+                                <div class="col-3">
                                     <div class="form-group">
                                         <select class="form-control" id="exampleFormControlSelect1" name="rating" <c:out
                                                 value="${isRegistered.get(report.id)}"/>
@@ -47,7 +49,7 @@
                                 <div class="col-1">
                                     <button class="btn btn-dark btn-sm" <c:out
                                             value="${isRegistered.get(report.id)}"/>
-                                            <c:out value="${isVoted.get(report.id)}"/>>vote
+                                            <c:out value="${isVoted.get(report.id)}"/>><fmt:message key="vote"/>
                                     </button>
                                 </div>
                             </div>

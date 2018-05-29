@@ -31,6 +31,8 @@ public class CommandResolver {
         commands.put("offerReport", new OfferByModer());
         commands.put("offersControl", new OffersControl());
         commands.put("locale", new Locale());
+        commands.put("deleteOfferedReport",new Delete());
+        commands.put("deleteReport",new Delete());
     }
 
     public static CommandResolver getInstance() {

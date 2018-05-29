@@ -17,13 +17,13 @@ public class ServiceFactory {
     private ServiceFactory() {
     }
 
-    private static <T extends Service> T getService(T t) {
-        Class<? extends Service> serviceClass = t.getClass();
+    private static <T extends Service> T getService(T type) {
+        Class<? extends Service> serviceClass = type.getClass();
         if (isTransactional(serviceClass)) {
-            ProxyService<T> proxyService = new ProxyService<>(t, serviceClass);
+            ProxyService<T> proxyService = new ProxyService<>(type, serviceClass);
             return proxyService.getProxy();
         }
-        return t;
+        return type;
     }
 
     public static NotificationService getNotificationService() {

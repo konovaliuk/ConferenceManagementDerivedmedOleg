@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
     <title>My Confs</title>
@@ -6,7 +8,7 @@
           integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 </head>
 <body>
-<%@include file="menu.jsp" %>
+<jsp:include page="menu.jsp"/>
 <ul class="list-group w-75" style="margin: auto; padding-top: 5px;">
     <li class="list-group-item">
         <ul class="list-group">

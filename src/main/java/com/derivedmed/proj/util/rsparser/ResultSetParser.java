@@ -33,15 +33,15 @@ public class ResultSetParser {
         }
         try {
             while (rs.next()) {
-                for (Field f : clazz.getDeclaredFields()) {
-                    if (f.isAnnotationPresent(Column.class)) {
-                        String name = f.getAnnotation(Column.class).name();
-                        f.setAccessible(true);
-                        Object object = rs.getObject(name);
-                        f.set(resultUnit, object);
-                    }
-                }
-                result.add(resultUnit);
+//                for (Field f : clazz.getDeclaredFields()) {
+//                    if (f.isAnnotationPresent(Column.class)) {
+//                        String name = f.getAnnotation(Column.class).name();
+//                        f.setAccessible(true);
+//                        Object object = rs.getObject(name);
+//                        f.set(resultUnit, object);
+//                    }
+//                }
+                result.add(setUpUnit(resultUnit,clazz,rs));
                 resultUnit = (T) clazz.getConstructor().newInstance();
             }
         } catch (SQLException e) {
@@ -57,4 +57,16 @@ public class ResultSetParser {
         }
         return result;
     }
+    private <T> T setUpUnit(T unit,Class clazz, ResultSet rs) throws IllegalAccessException, SQLException {
+        for (Field f : clazz.getDeclaredFields()) {
+            if (f.isAnnotationPresent(Column.class)) {
+                String name = f.getAnnotation(Column.class).name();
+                f.setAccessible(true);
+                Object object = rs.getObject(name);
+                f.set(unit, object);
+            }
+        }
+        return unit;
+    }
+
 }

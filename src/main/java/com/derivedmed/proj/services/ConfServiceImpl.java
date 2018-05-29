@@ -8,7 +8,6 @@ import com.derivedmed.proj.model.Report;
 import com.derivedmed.proj.model.Role;
 import com.derivedmed.proj.model.User;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 public class ConfServiceImpl implements ConfService {
     private static ConfServiceImpl ourInstance = new ConfServiceImpl();
     private final ConfDao confDao = DaoFactory.getInstance().getConfDao();
-    private final ReportService reportService =ServiceFactory.getReportService();
+    private final ReportService reportService = ServiceFactory.getReportService();
 
     public static ConfServiceImpl getInstance() {
         return ourInstance;
@@ -44,13 +43,9 @@ public class ConfServiceImpl implements ConfService {
     public List<Conf> getAll() {
         List<Conf> confs = confDao.getAll();
         List<Report> confirmed = reportService.getAll();
-        for (Conf conf : confs) {
-            conf.setReports(confirmed
-                    .stream()
-                    .filter(r->r.getConf_id()==conf.getId())
-                    .collect(Collectors.toList()));
-        }
-        return confs;
+        return confs.stream().peek(c -> c.setReports(confirmed.stream()
+                .filter(r -> r.getConf_id() == c.getId())
+                .collect(Collectors.toList()))).collect(Collectors.toList());
     }
 
     @Override
@@ -62,28 +57,18 @@ public class ConfServiceImpl implements ConfService {
         if (user.getRole() == Role.ADMINISTRATOR || user.getRole() == Role.MODERATOR) {
             return confs;
         }
-        List<Conf> result = new ArrayList<>();
-        for (Conf conf : confs) {
-            List<Report> reports = new ArrayList<>();
-            for (Report report : conf.getReports()) {
-                if (report.getSpeakerName() != null) {
-                    reports.add(report);
-                }
-            }
-            conf.setReports(reports);
-            if (!reports.isEmpty()) {
-                result.add(conf);
-            }
-        }
-        return result;
+        return confs.stream()
+                .peek(c -> c.setReports(c.getReports().stream()
+                        .filter(r -> r.getSpeakerName() != null).collect(Collectors.toList())))
+                .filter(c -> !c.getReports().isEmpty())
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Conf> getPast() {
-        List<Conf> result = getAll().stream()
+        return getAll().stream()
                 .filter(conf -> conf.getDate().getTime() < new Date().getTime())
                 .collect(Collectors.toList());
-        return result;
     }
 
     @Override

@@ -23,6 +23,8 @@ public class ConfDao implements CrudDao<Conf> {
     private static final String deleteSql = "delete from confs where conf_id = ?";
     private static final String selectAllSql = "select * from confs";
     private static final String clearAllSql = "delete from confs";
+    private final TransactionManager transactionManager = TransactionManager.getInstance();
+    private final ResultSetParser resultSetParser = ResultSetParser.getInstance();
 
     @Override
     public int create(Conf conf) {
@@ -43,42 +45,45 @@ public class ConfDao implements CrudDao<Conf> {
     @Override
     public Conf getByID(int id) {
         List<Conf> conf;
-        try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
+        Conf conference = new Conf();
+        try (ConnectionProxy connectionProxy = transactionManager.getConnection();
              PreparedStatement preparedStatement = PreparedStatmentCompilier.setValues(connectionProxy
                      .prepareStatement(selectSql), new Object[]{id})) {
-            conf = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new Conf());
+            conf = resultSetParser.parse(preparedStatement.executeQuery(), new Conf());
             if (!conf.isEmpty()) {
-                return conf.get(0);
+                conference = conf.get(0);
             }
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
         }
-        return new Conf();
+        return conference;
     }
 
     @Override
     public boolean update(Conf conf) {
+        boolean result = true;
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = PreparedStatmentCompilier.setValues(connectionProxy
                      .prepareStatement(updateSql), new Object[]{conf.getName(), conf.getPlace(), conf.getDate(), conf.getId()})) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
-            return false;
+            result = false;
         }
-        return true;
+        return result;
     }
 
     @Override
     public boolean delete(int id) {
+        boolean result = true;
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = PreparedStatmentCompilier.setValues(connectionProxy.prepareStatement(deleteSql), new Object[]{id})) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
-            return false;
+            result = false;
         }
-        return true;
+        return result;
     }
 
     @Override
@@ -86,10 +91,7 @@ public class ConfDao implements CrudDao<Conf> {
         ArrayList<Conf> resultList = new ArrayList<>();
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              PreparedStatement preparedStatement = connectionProxy.prepareStatement(selectAllSql)) {
-            resultList = ResultSetParser.getInstance().parse(preparedStatement.executeQuery(), new Conf());
-            if (!resultList.isEmpty()) {
-                return resultList;
-            }
+            resultList = resultSetParser.parse(preparedStatement.executeQuery(), new Conf());
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
         }
@@ -98,13 +100,14 @@ public class ConfDao implements CrudDao<Conf> {
 
     @Override
     public boolean clearAll() {
+        boolean result = true;
         try (ConnectionProxy connectionProxy = TransactionManager.getInstance().getConnection();
              Statement statement = connectionProxy.createStatement()) {
             statement.executeUpdate(clearAllSql);
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
-            return false;
+            result = false;
         }
-        return true;
+        return result;
     }
 }

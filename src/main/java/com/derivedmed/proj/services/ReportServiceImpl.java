@@ -12,9 +12,9 @@ import java.util.List;
 
 public class ReportServiceImpl implements ReportService {
     private static ReportServiceImpl ourInstance = new ReportServiceImpl();
-    private final UserDao userDao =DaoFactory.getInstance().getUserDao();
-    private final ConfDao confDao =DaoFactory.getInstance().getConfDao();
-    private final ReportDao reportDao =DaoFactory.getInstance().getReportDao();
+    private final UserDao userDao = DaoFactory.getInstance().getUserDao();
+    private final ConfDao confDao = DaoFactory.getInstance().getConfDao();
+    private final ReportDao reportDao = DaoFactory.getInstance().getReportDao();
 
     public static ReportServiceImpl getInstance() {
         return ourInstance;
@@ -54,11 +54,11 @@ public class ReportServiceImpl implements ReportService {
         return setSpeakersToReports(all);
     }
 
-    private List<Report> setSpeakersToReports(List<Report> reports){
+    private List<Report> setSpeakersToReports(List<Report> reports) {
         List<ReportWithSpeaker> withSpeakers = reportDao.getReportsWithSpeakers();
-        for (ReportWithSpeaker withSpeaker : withSpeakers){
-            for (Report allReport : reports){
-                if (allReport.getId() == withSpeaker.getReportId()){
+        for (ReportWithSpeaker withSpeaker : withSpeakers) {
+            for (Report allReport : reports) {
+                if (allReport.getId() == withSpeaker.getReportId()) {
                     allReport.setSpeakerName(withSpeaker.getSpeakerName());
                 }
             }
@@ -69,7 +69,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public List<Report> getByUserId(int id) {
         List<Report> reports = setSpeakersToReports(reportDao.getReportsByUserId(id));
-        reports = setConfNameAndDate(reports, confDao);
+        reports = setConfNameAndDate(reports);
         return reports;
     }
 
@@ -111,7 +111,7 @@ public class ReportServiceImpl implements ReportService {
     @Transactional
     public boolean editReport(Report report, int id) {
         update(report);
-        if (id!=0){
+        if (id != 0) {
             return setReportToSpeaker(id, report.getId());
         }
         return false;
@@ -120,7 +120,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public List<Report> getReportsOfferedBySpeakerOrModer(int speakerid, boolean bySpeaker) {
         List<Report> reports = setSpeakersToReports(reportDao.getReportsOfferedBySpeakerOrModer(speakerid, bySpeaker));
-        reports = setConfNameAndDate(reports, confDao);
+        reports = setConfNameAndDate(reports);
         return reports;
     }
 
@@ -129,11 +129,27 @@ public class ReportServiceImpl implements ReportService {
         return DaoFactory.getInstance().getReportDao().reportsOfferedBySpeakers(confirmed);
     }
 
-    private List<Report> setConfNameAndDate(List<Report> reports, ConfDao confDao) {//TODO DUDOS2
-        for (Report report : reports) {
-            Conf conf = confDao.getByID(report.getConf_id());
-            report.setConfName(conf.getName());
-            report.setDate(conf.getDate());
+    @Transactional
+    @Override
+    public boolean deleteOfferedReport(int userId, int reportId) {
+        return reportDao.deleteFromUsersReports(userId, reportId) && reportDao.delete(reportId);
+    }
+
+    @Transactional
+    @Override
+    public boolean deleteReport(int reportId) {
+        return reportDao.deleteFromUsersReports(reportId) && reportDao.delete(reportId);
+    }
+
+    private List<Report> setConfNameAndDate(List<Report> reports) {
+        List<ReportWithConf> reportWC = reportDao.getReportsWithConf();
+        for (ReportWithConf reportWithConf : reportWC) {
+            for (Report report : reports) {
+                if (report.getId() == reportWithConf.getReportId()) {
+                    report.setConfName(reportWithConf.getConfName());
+                    report.setDate(reportWithConf.getConfDate());
+                }
+            }
         }
         return reports;
     }

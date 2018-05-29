@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UserServiceImpl implements UserService {
     private static UserServiceImpl instance;
@@ -79,7 +80,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public HashMap<Integer, String> isUserRegistered(int userId, List<Conf> confs) {
+    public Map<Integer, String> isUserRegistered(int userId, List<Conf> confs) {
         List<Report> usersReports = reportService.getByUserId(userId);
         List<Integer> reportsIds = new ArrayList<>();
         HashMap<Integer, String> isRegistered = new HashMap<>();
@@ -102,7 +103,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public HashMap<Integer, String> isUserVoted(int userId, List<Conf> confs) {
+    public Map<Integer, String> isUserVoted(int userId, List<Conf> confs) {
         List<Integer> votedReports = reportService.votedByUser(userId);
         HashMap<Integer, String> voted = new HashMap<>();
         for (Conf conf : confs) {

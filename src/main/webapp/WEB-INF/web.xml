@@ -5,7 +5,7 @@
          version="3.1">
     <servlet>
         <servlet-name>PlainOldServlet</servlet-name>
-        <servlet-class>com.derivedmed.proj.controller.PlainOldServlet</servlet-class>
+        <servlet-class>com.derivedmed.proj.controller.ControllerServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>

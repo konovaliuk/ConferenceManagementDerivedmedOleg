@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
     <title>Offer report</title>
@@ -7,11 +8,13 @@
           integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 </head>
 <body>
-<%@include file="menu.jsp" %>
+<jsp:include page="menu.jsp"/>
+<fmt:setLocale value="${loc}"/>
+<fmt:setBundle basename="localization"/>
 <form action="/main" method="post">
-    <h2 class="text-center">Offer report</h2>
+    <h2 class="text-center"><fmt:message key="menu_offerReport"/> </h2>
     <div class="form-group w-50" style="margin: auto;">
-        <h4 class="text-center">Select conf : </h4>
+        <h4 class="text-center"><fmt:message key="selectConf"/>  </h4>
         <select class="form-control" id="select" name="confid">
             <c:forEach var="conf" items="${confs}">
                 <option value="${conf.id}"><c:out value="${conf.name}"/></option>
@@ -26,7 +29,7 @@
         <textarea class="form-control" required="required" placeholder="Report Description" name="reportdesc"></textarea>
     </div>
     <div class="form-group w-25 p-3" style="margin: auto;">
-        <button type="submit" class="btn btn-light">Offer</button>
+        <button type="submit" class="btn btn-light"><fmt:message key="or_offer"/></button>
     </div>
 </form>
 

@@ -8,30 +8,30 @@ import com.derivedmed.proj.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Vote implements Action {
 
-    private final UserService userService =ServiceFactory.getUserService();
-    private final ConfService confService =ServiceFactory.getConfService();
+    private final UserService userService = ServiceFactory.getUserService();
+    private final ConfService confService = ServiceFactory.getConfService();
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         User user = (User) req.getSession().getAttribute("user");
         int rating = Integer.parseInt(req.getParameter("rating"));
         String reportId = req.getParameter("reportId");
-        userService.vote(user.getId(),Integer.parseInt(reportId), rating);
+        userService.vote(user.getId(), Integer.parseInt(reportId), rating);
         List<Conf> confs = confService.getPast();
-        HashMap<Integer, String> isUserRegisteredForReport = userService.isUserRegistered(user.getId(), confs);
-        isUserRegisteredForReport.entrySet().forEach(entry->{
-            if ("".equals(entry.getValue())){
+        Map<Integer, String> isUserRegisteredForReport = userService.isUserRegistered(user.getId(), confs);
+        for (Map.Entry<Integer, String> entry : isUserRegisteredForReport.entrySet()) {
+            if ("".equals(entry.getValue())) {
                 entry.setValue("disabled");
-            }else {
+            } else {
                 entry.setValue("");
             }
-        });
-        HashMap<Integer, String> isUserVoted = userService.isUserVoted(user.getId(),confs);
+        }
+        Map<Integer, String> isUserVoted = userService.isUserVoted(user.getId(), confs);
         req.getSession().setAttribute("isVoted", isUserVoted);
         req.getSession().setAttribute("isRegistered", isUserRegisteredForReport);
         req.setAttribute("confs", confs);

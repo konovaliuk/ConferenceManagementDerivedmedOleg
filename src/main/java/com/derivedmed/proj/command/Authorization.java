@@ -9,11 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public class Authorization implements Action {
+
+    private final UserService userService =ServiceFactory.getUserService();
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
-        UserService userService = ServiceFactory.getUserService();
         User user = userService.getByLogin(login);
         if (user == null|| !password.equals(user.getPassword())) {
             req.setAttribute("message", "invalid email or password");

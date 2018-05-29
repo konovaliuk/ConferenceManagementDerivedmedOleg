@@ -5,7 +5,7 @@
     <title>My Bonuses</title>
 </head>
 <body>
-<%@include file="menu.jsp" %>
+<jsp:include page="menu.jsp"/>
 <div class="text-center">
     <p><c:out value="${user.login}"/>, you have <c:out value="${user.rating}"/> points.</p>
 </div>

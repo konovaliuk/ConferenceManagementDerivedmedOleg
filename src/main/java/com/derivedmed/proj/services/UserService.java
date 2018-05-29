@@ -4,8 +4,8 @@ import com.derivedmed.proj.model.Conf;
 import com.derivedmed.proj.model.User;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface UserService extends Service {
 
@@ -31,9 +31,9 @@ public interface UserService extends Service {
 
     boolean vote(int user_id, int report_id, int rating);
 
-    HashMap<Integer, String> isUserRegistered(int userId, List<Conf> confs);
+    Map<Integer, String> isUserRegistered(int userId, List<Conf> confs);
 
-    HashMap<Integer, String> isUserVoted(int userId, List<Conf> confs);
+    Map<Integer, String> isUserVoted(int userId, List<Conf> confs);
 
     List<User> getFreeThisDate(Timestamp timestamp);
 }

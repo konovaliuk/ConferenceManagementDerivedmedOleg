@@ -8,8 +8,8 @@ import com.derivedmed.proj.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UpcomingConfs implements Action {
 
@@ -20,7 +20,7 @@ public class UpcomingConfs implements Action {
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         User user = (User) req.getSession().getAttribute("user");
         List<Conf> confs = confService.getUpcoming(user);
-        HashMap<Integer, String> isUserRegisteredForReport = userService.isUserRegistered(user.getId(), confs);
+        Map<Integer, String> isUserRegisteredForReport = userService.isUserRegistered(user.getId(), confs);
         req.getSession().setAttribute("isRegistered", isUserRegisteredForReport);
         req.setAttribute("confs", confs);
         return "pages/upcoming.jsp";

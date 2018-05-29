@@ -19,18 +19,7 @@ public class TestMain {
     private static final ConfService confService =ServiceFactory.getConfService();
 
     public static void main(String[] args) {
-//        User user = new User();
-//        user.setEmail("speaker3@s.com");
-//        user.setId(6);
-//        user.setRole(Role.SPEAKER);
-//        user.setRole_id(3);
-//        user.setPassword("1");
-//        user.setLogin("speaker three");
-//        List<Conf> confs = confService.getUpcoming(user);
-//        confs.forEach(System.out::println);
-//        System.out.println(reportService.getByUserId(6));
-//        System.out.println(userService.isUserRegistered(6, confs));
-        System.out.println(userService.getUserByID(5));
+
 
     }
 

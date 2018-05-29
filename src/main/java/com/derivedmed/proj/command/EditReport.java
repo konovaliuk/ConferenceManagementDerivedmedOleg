@@ -32,7 +32,6 @@ public class EditReport implements Action {
         Report report = reportService.getById(reportid);
         Timestamp time = confService.getById(report.getConf_id()).getDate();
         List<User> speakers = userService.getFreeThisDate(time);
-        speakers.forEach(System.out::println);
         req.setAttribute("speakers", speakers);
         req.setAttribute("report", report);
         if (req.getMethod().equals("GET")) {

@@ -8,12 +8,13 @@
           integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 </head>
 <body>
-<%@include file="menu.jsp" %>
-
+<jsp:include page="menu.jsp"/>
+<jsp:include page="menu.jsp"/>
+<fmt:setLocale value="${loc}"/>
 <ul class="list-group w-75" style="margin: auto; padding-top: 5px;">
     <li class="list-group-item">
         <div class="row">
-            <p>Offered by me : </p>
+            <p><fmt:message key="mo_offeredByMe"/> </p>
         </div>
         <ul class="list-group">
             <c:forEach var="report" items="${requestScope.reports}">
@@ -41,7 +42,7 @@
     </li>
     <li class="list-group-item">
         <div class="row">
-            <p>My offers : </p>
+            <p><fmt:message key="mo_myOffers"/> </p>
         </div>
         <ul class="list-group">
             <c:forEach var="report" items="${requestScope.reportsByModer}">
@@ -62,10 +63,10 @@
                             </div>
                             <div class="col-3">
                                 <c:if test="${!report.speakerName.equals(user.login)}">
-                                    <button type="submit" class="btn btn-light">confirm offer</button>
+                                    <button type="submit" class="btn btn-light"><fmt:message key="oc_confirmOffer"/> </button>
                                 </c:if>
                                 <c:if test="${report.speakerName.equals(user.login)}">
-                                    <c:out value="confirmed!"/>
+                                    <fmt:message key="oc_confirmed"/>
                                 </c:if>
                             </div>
                         </div>

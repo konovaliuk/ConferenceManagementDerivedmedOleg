@@ -20,7 +20,6 @@ public class TransactionalInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (isTransactional(method)) {
             transactionManager.beginTransaction();
-            System.out.println("transactional!");
             Object result = method.invoke(object, args);
             transactionManager.commit();
             return result;

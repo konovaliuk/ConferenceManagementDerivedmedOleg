@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-public class PlainOldServlet extends HttpServlet {
+public class ControllerServlet extends HttpServlet {
     private final CommandResolver resolver = CommandResolver.getInstance();
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         SchedulerStarter.startSheduler();
     }
 

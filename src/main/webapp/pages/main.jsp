@@ -6,7 +6,7 @@
     <title>Conferences</title>
 </head>
 <body>
-<%@include file="menu.jsp" %>
+<jsp:include page="menu.jsp"/>
 <h3 class="text-center">Hello, <c:out value="${user.login}"/></h3>
 </body>
 </html>

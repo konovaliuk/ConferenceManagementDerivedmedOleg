@@ -60,7 +60,7 @@ public class UserServiceImplTest {
 
     @Test
     public void isUserRegistered() {
-        HashMap<Integer, String> isRegistered = userService.isUserRegistered(1, confs);
+        Map<Integer, String> isRegistered = userService.isUserRegistered(1, confs);
         long actual = isRegistered.entrySet().stream()
                 .filter((e) -> "disabled".equals(e.getValue()))
                 .count();
@@ -70,7 +70,7 @@ public class UserServiceImplTest {
 
     @Test
     public void isUserVoted() {
-        HashMap<Integer,String> isUserVoted = userService.isUserVoted(1,confs);
+        Map<Integer,String> isUserVoted = userService.isUserVoted(1,confs);
         long actual = isUserVoted.entrySet().stream()
                 .filter((e) -> "disabled".equals(e.getValue()))
                 .count();
