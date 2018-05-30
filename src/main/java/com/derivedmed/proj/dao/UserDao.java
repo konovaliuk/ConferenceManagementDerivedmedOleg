@@ -16,9 +16,9 @@ public class UserDao implements CrudDao<User> {
 
     private static final Logger LOGGER = LogManager.getLogger(UserDao.class);
     private static final String SQL_EXCEPTION = "SQL exception user DAO";
-    private static final String CREATE_SQL = "INSERT INTO users (role_id, login, password, email) VALUES (?, ?, ?, ?)";
+    private static final String CREATE_SQL = "INSERT INTO users (roleId, login, password, email) VALUES (?, ?, ?, ?)";
     private static final String GET_BY_ID_SQL = "select * from users where user_id = ?";
-    private static final String UPDATE_SQL = "update users set login = ?, password = ?, role_id = ?, email = ?," +
+    private static final String UPDATE_SQL = "update users set login = ?, password = ?, roleId = ?, email = ?," +
             " rating = ? where user_id = ?";
     private static final String DELETE_SQL = "delete from users where user_id =?";
     private static final String GET_SPEAKER_BY_REPORT_ID = "select user_id from users_reports where report_id = ? " +
@@ -28,14 +28,14 @@ public class UserDao implements CrudDao<User> {
             "JOIN users_reports u ON users.user_id = u.user_id " +
             "JOIN reports r ON u.report_id = r.report_id " +
             "JOIN confs c ON r.conf_id = c.conf_id " +
-            "WHERE role_id = ? AND active_speaker = ? AND c.confDate = ?";
+            "WHERE roleId = ? AND active_speaker = ? AND c.confDate = ?";
     private static final String REGISTER_USER_TO_REPORT_SQL = "insert into users_reports (user_id, report_id) " +
             "values(?, ?)";
-    private static final String GET_BY_RATING_SQL = "select * from users where role_id = ? order by rating desc";
+    private static final String GET_BY_RATING_SQL = "select * from users where roleId = ? order by rating desc";
     private static final String AUTH_SQL = "select * from users where email = ? and password = ?";
     private static final String GET_BY_LOGIN_SQL = "select * from users where email = ?";
-    private static final String GET_ROLE_ID_SQL = "select role_id from roles where role_name = ?";
-    private static final String GET_ROLE_SQL = "select role_name from roles where role_id = ?";
+    private static final String GET_ROLE_ID_SQL = "select roleId from roles where role_name = ?";
+    private static final String GET_ROLE_SQL = "select role_name from roles where roleId = ?";
     private static final String VOTE_FIRST_SQL = "update users_reports set rating =? where user_id =? and report_id = ?";
     private static final String VOTE_SECOND_SQL = "update users set rating = rating + ? where user_id = ?";
     private static final String GET_ALL_SQL = "select * from users";

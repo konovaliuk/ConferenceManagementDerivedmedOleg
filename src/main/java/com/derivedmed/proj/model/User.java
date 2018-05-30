@@ -11,7 +11,7 @@ public class User {
     @Column(name = "user_id")
     private int id;
 
-    @Column(name = "role_id")
+    @Column(name = "roleId")
     private int roleId;
 
     @Column(name = "login")

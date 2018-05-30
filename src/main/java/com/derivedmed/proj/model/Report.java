@@ -14,7 +14,7 @@ public class Report {
     @Column(name = "conf_id")
     private int conf_id;
 
-    @Column(name = "report_name")
+    @Column(name = "reportName")
     private String reportName;
 
     @Column(name = "report_desk")

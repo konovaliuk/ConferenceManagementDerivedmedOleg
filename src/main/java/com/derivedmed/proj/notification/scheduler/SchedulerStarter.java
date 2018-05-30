@@ -20,7 +20,7 @@ public class SchedulerStarter {
     public static void startSheduler() {
         JobDetail jobDetail = JobBuilder.newJob(SchedulerTask.class).build();
         Trigger trigger = TriggerBuilder.newTrigger().withIdentity("Send mails")
-                .withSchedule(CronScheduleBuilder.cronSchedule("0 0 7 * * ?"))
+                .withSchedule(CronScheduleBuilder.cronSchedule("0 30 16 * * ?"))
                 .build();
         try {
             scheduler = StdSchedulerFactory.getDefaultScheduler();

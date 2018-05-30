@@ -15,28 +15,28 @@ public class ReportDao implements CrudDao<Report> {
 
     private static final Logger LOGGER = LogManager.getLogger(ReportDao.class);
     private static final String SQL_EXCEPTION = "SQL exception Report DAO";
-    private static final String CREATE_SQL = "insert into reports (conf_id, report_name, report_desk) values (?, ?, ?)";
+    private static final String CREATE_SQL = "insert into reports (conf_id, reportName, report_desk) values (?, ?, ?)";
     private static final String GET_BY_ID_SQL = "select * from reports where report_id = ?";
-    private static final String UPDATE_SQL = "update reports set conf_id = ?, report_name = ?, report_desk = ? " +
+    private static final String UPDATE_SQL = "update reports set conf_id = ?, reportName = ?, report_desk = ? " +
             "where report_id = ?";
     private static final String DELETE_SQL = "delete from reports where report_id = ?";
     private static final String GET_ALL_SQL = "select * from reports";
     private static final String CLEAR_ALL_SQL = "delete from reports";
-    private static final String GET_REPORTS_BY_USER_ID_SQL = "select r.report_id, r.conf_id, report_name, report_desk " +
+    private static final String GET_REPORTS_BY_USER_ID_SQL = "select r.report_id, r.conf_id, reportName, report_desk " +
             "from reports r join users_reports ur on r.report_id = ur.report_id where ur.user_id = ?";
     private static final String CONFIRM_OFFER_SECOND_SQL = "update users_reports set active_speaker = ?, confirmed = ?" +
             ", by_speaker = ?, by_moder = ? where report_id = ? and user_id <> ?";
-    private static final String OFFERED_BY_SPEAKER_SQL = "select reports.report_id,conf_id,report_name,report_desk" +
+    private static final String OFFERED_BY_SPEAKER_SQL = "select reports.report_id,conf_id,reportName,report_desk" +
             " from reports join users_reports on reports.report_id = users_reports.report_id where user_id =?" +
             " and by_speaker =? and by_moder =?";
     private static final String VOTED_BY_USER_SQL = "select report_id from users_reports where user_id =? and rating > 0";
     private static final String REPORTS_OFFERED_BY_SPEAKERS_SQL = "select c.conf_id, confirmed, ur.user_id, " +
-            "ur.report_id, u.login, r.report_name, c.conf_name, c.confDate from users u " +
+            "ur.report_id, u.login, r.reportName, c.conf_name, c.confDate from users u " +
             "join users_reports ur on u.user_id = ur.user_id " +
             "join reports r on ur.report_id = r.report_id " +
             "join confs c on r.conf_id = c.conf_id " +
-            "where u.role_id = ? and by_speaker = ? and confirmed = ? and active_speaker = ? ";
-    private static final String DATA_FOR_NOTIFICATIONS_SQL = "select r.report_name, u.email, u.login, c.conf_name," +
+            "where u.roleId = ? and by_speaker = ? and confirmed = ? and active_speaker = ? ";
+    private static final String DATA_FOR_NOTIFICATIONS_SQL = "select r.reportName, u.email, u.login, c.conf_name," +
             " c.conf_place, c.confDate from users u " +
             "join users_reports ur on u.user_id = ur.user_id " +
             "join reports r on ur.report_id = r.report_id " +

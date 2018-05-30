@@ -24,7 +24,7 @@ public class ReportOfferedBySpeaker {
     @Column(name = "confDate")
     private Timestamp confDate;
 
-    @Column(name = "report_name")
+    @Column(name = "reportName")
     private String reportName;
 
     @Column(name = "login")
