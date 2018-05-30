@@ -18,7 +18,7 @@ public class SchedulerTask implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         Timestamp time = new Timestamp(new Date().getTime());
-        List<MailData> mailData = notificationService.dataForSheduler(time);
+        List<MailData> mailData = notificationService.dataForScheduler(time);
         mailData.forEach(m -> MailSender.getInstance().sendMail(m));
     }
 }

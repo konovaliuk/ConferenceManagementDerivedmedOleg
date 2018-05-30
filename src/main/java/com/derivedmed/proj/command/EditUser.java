@@ -4,12 +4,11 @@ import com.derivedmed.proj.factory.ServiceFactory;
 import com.derivedmed.proj.model.Role;
 import com.derivedmed.proj.model.User;
 import com.derivedmed.proj.services.UserService;
+import com.derivedmed.proj.util.FieldChecker;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class EditUser implements Action {
 
@@ -33,16 +32,16 @@ public class EditUser implements Action {
         String rating = req.getParameter("userRating");
         String role = req.getParameter("role");
 
-        if (StringUtils.isNoneBlank(email)&& checkEmail(email)){
+        if (StringUtils.isNoneBlank(email)&& FieldChecker.checkEmail(email)){
             userToEdit.setEmail(email);
         }
-        if (StringUtils.isNoneBlank(login)&&checkField(login)){
+        if (StringUtils.isNoneBlank(login)&&FieldChecker.checkField(login)){
             userToEdit.setLogin(login);
         }
-        if (StringUtils.isNoneBlank(password)&&checkField(password)){
+        if (StringUtils.isNoneBlank(password)&&FieldChecker.checkField(password)){
             userToEdit.setPassword(password);
         }
-        if (StringUtils.isNoneBlank(rating)&&checkInt(rating)){
+        if (StringUtils.isNoneBlank(rating)&&FieldChecker.checkInt(rating)){
             userToEdit.setRating(Integer.parseInt(rating));
         }
         if (StringUtils.isNoneBlank(role)){
@@ -50,20 +49,5 @@ public class EditUser implements Action {
         }
         userService.updateUser(userToEdit);
         return new EditUsers().execute(req,resp);
-    }
-    private boolean checkField(String value) {
-        Pattern p = Pattern.compile("^[а-яА-ЯёЁa-zA-Z0-9\\s*]+$");
-        Matcher m = p.matcher(value);
-        return m.matches();
-    }
-    private boolean checkInt(String value) {
-        Pattern p = Pattern.compile("[0-9]{1,}");
-        Matcher m = p.matcher(value);
-        return m.matches();
-    }
-    private boolean checkEmail(String email) {
-        Pattern p = Pattern.compile("^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$");
-        Matcher m = p.matcher(email);
-        return m.matches();
     }
 }

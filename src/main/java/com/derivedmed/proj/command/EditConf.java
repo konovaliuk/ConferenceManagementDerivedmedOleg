@@ -5,6 +5,7 @@ import com.derivedmed.proj.model.Conf;
 import com.derivedmed.proj.model.Role;
 import com.derivedmed.proj.model.User;
 import com.derivedmed.proj.services.ConfService;
+import com.derivedmed.proj.util.FieldChecker;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,8 +14,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class EditConf implements Action {
 
@@ -35,7 +34,7 @@ public class EditConf implements Action {
         String confName = req.getParameter("confName").replaceAll("\\s{2,}", " ");
         String confPlace = req.getParameter("confPlace").replaceAll("\\s{2,}", " ");
         String confsDate = req.getParameter("confDate");
-        if (!checkField(confName) || !checkField(confPlace)) {
+        if (!FieldChecker.checkField(confName) || !FieldChecker.checkField(confPlace)) {
             req.setAttribute("message", "fields may contains only letters and numbers");
             return "pages/editconf.jsp";
         }
@@ -59,11 +58,5 @@ public class EditConf implements Action {
         confService.update(conf);
         req.setAttribute("confs", confService.getUpcoming(user));
         return new UpcomingConfs().execute(req, resp);
-    }
-
-    private boolean checkField(String value) {
-        Pattern p = Pattern.compile("^[а-яА-ЯёЁa-zA-Z0-9\\s*]+$");
-        Matcher m = p.matcher(value);
-        return m.matches();
     }
 }

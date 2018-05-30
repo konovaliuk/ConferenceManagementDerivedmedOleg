@@ -15,10 +15,10 @@ public class Report {
     private int conf_id;
 
     @Column(name = "report_name")
-    private String report_name;
+    private String reportName;
 
     @Column(name = "report_desk")
-    private String report_description;
+    private String reportDescription;
 
     private String speakerName;
 
@@ -27,11 +27,11 @@ public class Report {
     private Timestamp date;
 
 
-    public Report(int id, int conf_id, String report_name, String report_description, String confName, Timestamp date) {
+    public Report(int id, int conf_id, String reportName, String reportDescription, String confName, Timestamp date) {
         this.id = id;
         this.conf_id = conf_id;
-        this.report_name = report_name;
-        this.report_description = report_description;
+        this.reportName = reportName;
+        this.reportDescription = reportDescription;
         this.confName = confName;
         this.date = date;
     }
@@ -55,20 +55,20 @@ public class Report {
         this.conf_id = conf_id;
     }
 
-    public String getReport_name() {
-        return report_name;
+    public String getReportName() {
+        return reportName;
     }
 
-    public void setReport_name(String report_name) {
-        this.report_name = report_name;
+    public void setReportName(String reportName) {
+        this.reportName = reportName;
     }
 
-    public String getReport_description() {
-        return report_description;
+    public String getReportDescription() {
+        return reportDescription;
     }
 
-    public void setReport_description(String report_description) {
-        this.report_description = report_description;
+    public void setReportDescription(String reportDescription) {
+        this.reportDescription = reportDescription;
     }
 
     public String getSpeakerName() {
@@ -102,14 +102,14 @@ public class Report {
         Report report = (Report) o;
         return id == report.id &&
                 conf_id == report.conf_id &&
-                Objects.equals(report_name, report.report_name) &&
-                Objects.equals(report_description, report.report_description);
+                Objects.equals(reportName, report.reportName) &&
+                Objects.equals(reportDescription, report.reportDescription);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, conf_id, report_name, report_description);
+        return Objects.hash(id, conf_id, reportName, reportDescription);
     }
 
     @Override
@@ -117,8 +117,8 @@ public class Report {
         return "Report{" +
                 "id=" + id +
                 ", conf_id=" + conf_id +
-                ", report_name='" + report_name + '\'' +
-                ", report_description='" + report_description + '\'' +
+                ", reportName='" + reportName + '\'' +
+                ", reportDescription='" + reportDescription + '\'' +
                 ", speakerName='" + speakerName + '\'' +
                 ", confName='" + confName + '\'' +
                 ", date=" + date +

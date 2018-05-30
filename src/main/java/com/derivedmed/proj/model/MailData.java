@@ -21,7 +21,7 @@ public class MailData {
     @Column(name = "conf_place")
     private String confPlace;
 
-    @Column(name = "conf_date")
+    @Column(name = "confDate")
     private Timestamp confDate;
 
     @Column(name = "report_name")

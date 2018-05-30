@@ -12,7 +12,7 @@ public class User {
     private int id;
 
     @Column(name = "role_id")
-    private int role_id;
+    private int roleId;
 
     @Column(name = "login")
     private String login;
@@ -66,12 +66,12 @@ public class User {
         this.id = id;
     }
 
-    public int getRole_id() {
-        return role_id;
+    public int getRoleId() {
+        return roleId;
     }
 
-    public void setRole_id(int role_id) {
-        this.role_id = role_id;
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 
     public String getLogin() {
@@ -119,7 +119,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", role_id=" + role_id +
+                ", roleId=" + roleId +
                 ", login='" + login + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +

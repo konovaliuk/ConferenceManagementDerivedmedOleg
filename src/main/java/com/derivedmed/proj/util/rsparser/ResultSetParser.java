@@ -14,10 +14,10 @@ import java.util.ArrayList;
 public class ResultSetParser {
     private static Logger LOGGER = LogManager.getLogger(ResultSetParser.class);
 
-    private static ResultSetParser ourInstance = new ResultSetParser();
+    private static ResultSetParser instance = new ResultSetParser();
 
     public static ResultSetParser getInstance() {
-        return ourInstance;
+        return instance;
     }
 
     private ResultSetParser() {
@@ -33,14 +33,6 @@ public class ResultSetParser {
         }
         try {
             while (rs.next()) {
-//                for (Field f : clazz.getDeclaredFields()) {
-//                    if (f.isAnnotationPresent(Column.class)) {
-//                        String name = f.getAnnotation(Column.class).name();
-//                        f.setAccessible(true);
-//                        Object object = rs.getObject(name);
-//                        f.set(resultUnit, object);
-//                    }
-//                }
                 result.add(setUpUnit(resultUnit,clazz,rs));
                 resultUnit = (T) clazz.getConstructor().newInstance();
             }

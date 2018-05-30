@@ -19,7 +19,7 @@
                             <b><c:out value="${report.confName}"/></b>
                         </div>
                         <div class="col-3">
-                            <c:out value="${report.report_name}"/>
+                            <c:out value="${report.reportName}"/>
                         </div>
                         <div class="col-6" style="text-align: right">
                             <c:out value="${report.date}"/>

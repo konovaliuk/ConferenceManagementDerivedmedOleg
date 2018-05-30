@@ -9,9 +9,9 @@ import java.util.Arrays;
 
 public class ServiceFactory {
 
-    private static ServiceFactory ourInstance = new ServiceFactory();
+    private static ServiceFactory instance = new ServiceFactory();
     public static ServiceFactory getInstance() {
-        return ourInstance;
+        return instance;
     }
 
     private ServiceFactory() {
@@ -27,23 +27,19 @@ public class ServiceFactory {
     }
 
     public static NotificationService getNotificationService() {
-        NotificationService notificationService = getService(NotificationServiceImpl.getInstance());
-        return notificationService;
+        return getService(NotificationServiceImpl.getInstance());
     }
 
     public static UserService getUserService() {
-        UserService userService = getService(UserServiceImpl.getInstance());
-        return userService;
+        return getService(UserServiceImpl.getInstance());
     }
 
     public static ReportService getReportService() {
-        ReportService reportService = getService(ReportServiceImpl.getInstance());
-        return reportService;
+        return getService(ReportServiceImpl.getInstance());
     }
 
     public static ConfService getConfService() {
-        ConfService confService = getService(ConfServiceImpl.getInstance());
-        return confService;
+        return getService(ConfServiceImpl.getInstance());
     }
 
     private static boolean isTransactional(Class clazz) {

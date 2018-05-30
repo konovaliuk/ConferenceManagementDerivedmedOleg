@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
         return userDao.update(user);
     }
 
+    @Transactional
     @Override
     public boolean delete(int id) {
         return userDao.deleteFromUsersReports(id) && userDao.delete(id);
@@ -83,7 +84,7 @@ public class UserServiceImpl implements UserService {
     public Map<Integer, String> isUserRegistered(int userId, List<Conf> confs) {
         List<Report> usersReports = reportService.getByUserId(userId);
         List<Integer> reportsIds = new ArrayList<>();
-        HashMap<Integer, String> isRegistered = new HashMap<>();
+        Map<Integer, String> isRegistered = new HashMap<>();
 
         for (Report r : usersReports) {
             reportsIds.add(r.getId());
@@ -120,8 +121,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public boolean vote(int user_id, int report_id, int rating) {
-        return userDao.vote(user_id, report_id, rating);
+    public boolean vote(int userId, int reportId, int rating) {
+        return userDao.vote(userId, reportId, rating);
     }
 
     @Override

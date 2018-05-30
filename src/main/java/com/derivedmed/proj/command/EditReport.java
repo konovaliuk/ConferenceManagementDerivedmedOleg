@@ -7,14 +7,13 @@ import com.derivedmed.proj.model.User;
 import com.derivedmed.proj.services.ConfService;
 import com.derivedmed.proj.services.ReportService;
 import com.derivedmed.proj.services.UserService;
+import com.derivedmed.proj.util.FieldChecker;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class EditReport implements Action {
 
@@ -43,18 +42,11 @@ public class EditReport implements Action {
         if (StringUtils.isNoneBlank(speakerid)) {
             id = Integer.parseInt(speakerid);
         }
-        if (!checkField(reportName)) {
-            req.setAttribute("message", "fields may contains only letters and numbers");
-            return "pages/editreport.jsp";
+        if (FieldChecker.checkField(reportName)&&StringUtils.isNoneBlank(reportName)) {
+            report.setReportName(reportName);
         }
-        report.setReport_name(reportName);
         reportService.editReport(report, id);
         return new UpcomingConfs().execute(req, resp);
     }
 
-    private boolean checkField(String value) {
-        Pattern p = Pattern.compile("^[а-яА-ЯёЁa-zA-Z0-9\\s*]+$");
-        Matcher m = p.matcher(value);
-        return m.matches();
-    }
 }

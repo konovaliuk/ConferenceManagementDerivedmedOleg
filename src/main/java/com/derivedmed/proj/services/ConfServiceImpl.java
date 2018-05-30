@@ -7,6 +7,7 @@ import com.derivedmed.proj.model.Conf;
 import com.derivedmed.proj.model.Report;
 import com.derivedmed.proj.model.Role;
 import com.derivedmed.proj.model.User;
+import com.derivedmed.proj.util.annotations.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -14,8 +15,8 @@ import java.util.stream.Collectors;
 
 public class ConfServiceImpl implements ConfService {
     private static ConfServiceImpl ourInstance = new ConfServiceImpl();
-    private final ConfDao confDao = DaoFactory.getInstance().getConfDao();
-    private final ReportService reportService = ServiceFactory.getReportService();
+    private static final ConfDao confDao = DaoFactory.getInstance().getConfDao();
+    private static final ReportService reportService = ServiceFactory.getReportService();
 
     public static ConfServiceImpl getInstance() {
         return ourInstance;
@@ -42,8 +43,8 @@ public class ConfServiceImpl implements ConfService {
     @Override
     public List<Conf> getAll() {
         List<Conf> confs = confDao.getAll();
-        List<Report> confirmed = reportService.getAll();
-        return confs.stream().peek(c -> c.setReports(confirmed.stream()
+        List<Report> reports = reportService.getAll();
+        return confs.stream().peek(c -> c.setReports(reports.stream()
                 .filter(r -> r.getConf_id() == c.getId())
                 .collect(Collectors.toList()))).collect(Collectors.toList());
     }
@@ -54,7 +55,7 @@ public class ConfServiceImpl implements ConfService {
                 .filter(conf -> conf.getDate().getTime() > new Date().getTime())
                 .collect(Collectors.toList());
 
-        if (user.getRole() == Role.ADMINISTRATOR || user.getRole() == Role.MODERATOR) {
+        if (user.getRole() != Role.USER) {
             return confs;
         }
         return confs.stream()
@@ -71,6 +72,7 @@ public class ConfServiceImpl implements ConfService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public boolean delete(int id) {
         return confDao.delete(id);

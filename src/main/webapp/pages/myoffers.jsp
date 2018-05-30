@@ -24,7 +24,7 @@
                             <b><c:out value="${report.confName}"/></b>
                         </div>
                         <div class="col-3">
-                            <c:out value="${report.report_name}"/>
+                            <c:out value="${report.reportName}"/>
                         </div>
                         <div class="col-3">
                             <fmt:formatDate pattern="dd MMM yyyy HH:mm"
@@ -55,7 +55,7 @@
                                 <b><c:out value="${report.confName}"/></b>
                             </div>
                             <div class="col-3">
-                                <c:out value="${report.report_name}"/>
+                                <c:out value="${report.reportName}"/>
                             </div>
                             <div class="col-3">
                                 <fmt:formatDate pattern="dd MMM yyyy HH:mm"

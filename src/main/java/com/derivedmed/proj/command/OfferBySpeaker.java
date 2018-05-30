@@ -30,8 +30,8 @@ public class OfferBySpeaker implements Action {
         }
         Report report = new Report();
         report.setConf_id(Integer.parseInt(req.getParameter("confid")));
-        report.setReport_name(req.getParameter("reportname"));
-        report.setReport_description(req.getParameter("reportdesc"));
+        report.setReportName(req.getParameter("reportname"));
+        report.setReportDescription(req.getParameter("reportdesc"));
         int id = reportService.create(report);
         if (id == 0){
             return "pages/wrong.jsp";

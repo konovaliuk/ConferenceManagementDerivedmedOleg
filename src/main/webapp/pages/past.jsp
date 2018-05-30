@@ -27,7 +27,7 @@
                             <input type="hidden" name="reportId" value="${report.id}">
                             <div class="row">
                                 <div class="col-7">
-                                    <p><c:out value="${report.report_name}"/></p>
+                                    <p><c:out value="${report.reportName}"/></p>
                                     <p>Speaker : <c:out value="${report.speakerName}"/></p>
                                 </div>
                                 <div class="col-1" style="text-align: right;">

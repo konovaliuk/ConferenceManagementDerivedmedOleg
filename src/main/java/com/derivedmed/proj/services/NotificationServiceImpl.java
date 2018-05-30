@@ -8,18 +8,18 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public class NotificationServiceImpl implements NotificationService {
-    private static NotificationServiceImpl ourInstance = new NotificationServiceImpl();
+    private static NotificationServiceImpl instance = new NotificationServiceImpl();
     private static ReportDao reportDao = DaoFactory.getInstance().getReportDao();
 
     public static NotificationServiceImpl getInstance() {
-        return ourInstance;
+        return instance;
     }
 
     private NotificationServiceImpl() {
     }
 
     @Override
-    public List<MailData> dataForSheduler(Timestamp time) {
+    public List<MailData> dataForScheduler(Timestamp time) {
         return reportDao.getDataForNotifications(time);
     }
 }

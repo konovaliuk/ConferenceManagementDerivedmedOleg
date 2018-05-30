@@ -25,7 +25,7 @@ create table reports
 (
   report_id            int not null AUTO_INCREMENT,
   conf_id              int not null,
-  report_name          varchar(22) not null,
+  reportName          varchar(22) not null,
   report_desk          varchar(255) not null,
   primary key (report_id)
 )
@@ -34,16 +34,16 @@ create table reports
 
 create table roles
 (
-  role_id              int not null AUTO_INCREMENT,
+  roleId              int not null AUTO_INCREMENT,
   role_name            varchar(22) not null,
-  primary key (role_id)
+  primary key (roleId)
 )
   CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 create table users
 (
   user_id              int not null AUTO_INCREMENT,
-  role_id              int not null,
+  roleId              int not null,
   email                varchar(44) not null UNIQUE ,
   login                varchar(44) not null UNIQUE ,
   password             varchar(44) not null,
@@ -66,14 +66,14 @@ create table users_reports
   CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 alter table reports add constraint FK_Relationship_2 foreign key (conf_id)
-references confs (conf_id) on delete restrict on update restrict;
+references confs (conf_id) on delete cascade on update restrict;
 
-alter table users add constraint FK_Relationship_1 foreign key (role_id)
-references roles (role_id) on delete restrict on update restrict;
+alter table users add constraint FK_Relationship_1 foreign key (roleId)
+references roles (roleId) on delete restrict on update restrict;
 
 alter table users_reports add constraint FK_Relationship_4 foreign key (user_id)
 references users (user_id) on delete restrict on update restrict;
 
 alter table users_reports add constraint FK_Relationship_5 foreign key (report_id)
-references reports (report_id) on delete restrict on update restrict;
+references reports (report_id) on delete cascade on update restrict;
 

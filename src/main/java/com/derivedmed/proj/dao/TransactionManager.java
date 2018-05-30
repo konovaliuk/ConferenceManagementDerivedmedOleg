@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class TransactionManager {
 
-    private final DbConnector dataSource = DbConnector.getInstance();
+    private final DbConnector DATA_SOURCE = DbConnector.getInstance();
     private static final ThreadLocal<ConnectionProxy> currentConnection = new ThreadLocal<>();
     private static TransactionManager ourInstance = new TransactionManager();
     private static Logger LOGGER = LogManager.getLogger(DbConnector.class);
@@ -22,7 +22,7 @@ public class TransactionManager {
     ConnectionProxy getConnection() {
 
         if (currentConnection.get() == null) {
-            return new ConnectionProxy(dataSource.getConnection());
+            return new ConnectionProxy(DATA_SOURCE.getConnection());
         } else {
             return provideConnection();
         }
@@ -73,7 +73,7 @@ public class TransactionManager {
             return currentConnection.get();
         }
 
-        currentConnection.set(new ConnectionProxy(dataSource.getConnection()));
+        currentConnection.set(new ConnectionProxy(DATA_SOURCE.getConnection()));
         currentConnection.get().setTransactionActive(true);
 
         try {

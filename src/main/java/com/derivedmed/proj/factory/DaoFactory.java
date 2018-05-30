@@ -9,10 +9,10 @@ public class DaoFactory {
     private static final ConfDao confDao = new ConfDao();
     private static final ReportDao reportDao = new ReportDao();
 
-    private static final DaoFactory ourInstance = new DaoFactory();
+    private static final DaoFactory instance = new DaoFactory();
 
     public static DaoFactory getInstance() {
-        return ourInstance;
+        return instance;
     }
 
     private DaoFactory() {

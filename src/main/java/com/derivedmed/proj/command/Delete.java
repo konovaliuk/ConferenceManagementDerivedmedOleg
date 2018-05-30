@@ -3,19 +3,20 @@ package com.derivedmed.proj.command;
 import com.derivedmed.proj.factory.ServiceFactory;
 import com.derivedmed.proj.model.Role;
 import com.derivedmed.proj.model.User;
+import com.derivedmed.proj.services.ConfService;
 import com.derivedmed.proj.services.ReportService;
 import com.derivedmed.proj.services.UserService;
+import com.derivedmed.proj.util.FieldChecker;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Delete implements Action {
 
     private final ReportService reportService = ServiceFactory.getReportService();
     private final UserService userService = ServiceFactory.getUserService();
+    private final ConfService confService = ServiceFactory.getConfService();
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
@@ -25,13 +26,18 @@ public class Delete implements Action {
         }
         String reportId = req.getParameter("reportId");
         String userId = req.getParameter("userId");
+        String confId = req.getParameter("confId");
         int report_id = 0;
         int user_id = 0;
-        if (StringUtils.isNoneBlank(reportId) && checkInt(reportId)) {
+        int conf_id = 0;
+        if (StringUtils.isNoneBlank(reportId) && FieldChecker.checkInt(reportId)) {
             report_id = Integer.parseInt(reportId);
         }
-        if (StringUtils.isNoneBlank(userId) && checkInt(userId)) {
+        if (StringUtils.isNoneBlank(userId) && FieldChecker.checkInt(userId)) {
             user_id = Integer.parseInt(userId);
+        }
+        if (StringUtils.isNoneBlank(confId) && FieldChecker.checkInt(confId)) {
+            conf_id = Integer.parseInt(confId);
         }
         if ("deleteOfferedReport".equals(req.getParameter("command")) && report_id != 0 && user_id != 0) {
             reportService.deleteOfferedReport(user_id, report_id);
@@ -45,14 +51,13 @@ public class Delete implements Action {
             userService.delete(user_id);
             return new EditUsers().execute(req, resp);
         }
+        if ("deleteConf".equals(req.getParameter("command")) && conf_id != 0) {
+            confService.delete(conf_id);
+            return new UpcomingConfs().execute(req, resp);
+        }
 
         return "pages/wrong.jsp";
     }
 
-    private boolean checkInt(String value) {
-        Pattern p = Pattern.compile("[0-9]{1,}");
-        Matcher m = p.matcher(value);
-        return m.matches();
-    }
 
 }

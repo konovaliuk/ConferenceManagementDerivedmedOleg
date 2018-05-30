@@ -6,5 +6,5 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface NotificationService extends Service {
-    List<MailData> dataForSheduler(Timestamp time);
+    List<MailData> dataForScheduler(Timestamp time);
 }

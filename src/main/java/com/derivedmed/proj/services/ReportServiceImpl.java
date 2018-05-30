@@ -11,13 +11,13 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public class ReportServiceImpl implements ReportService {
-    private static ReportServiceImpl ourInstance = new ReportServiceImpl();
+    private static ReportServiceImpl instance = new ReportServiceImpl();
     private final UserDao userDao = DaoFactory.getInstance().getUserDao();
     private final ConfDao confDao = DaoFactory.getInstance().getConfDao();
     private final ReportDao reportDao = DaoFactory.getInstance().getReportDao();
 
     public static ReportServiceImpl getInstance() {
-        return ourInstance;
+        return instance;
     }
 
     private ReportServiceImpl() {
@@ -75,7 +75,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<Integer> votedByUser(int user_id) {
-        return DaoFactory.getInstance().getReportDao().votedByUser(user_id);
+        return reportDao.votedByUser(user_id);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<ReportOfferedBySpeaker> offeredBySpeakers(boolean confirmed) {
-        return DaoFactory.getInstance().getReportDao().reportsOfferedBySpeakers(confirmed);
+        return reportDao.reportsOfferedBySpeakers(confirmed);
     }
 
     @Transactional

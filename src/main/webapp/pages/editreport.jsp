@@ -17,7 +17,7 @@
         <input type="hidden" name="command" value="editReport"/>
         <input type="hidden" name="reportid" value="${report.id}">
         <div class="form-group" >
-            <input type="text" class="form-control" placeholder="${report.report_name}" name="reportName">
+            <input type="text" class="form-control" placeholder="${report.reportName}" name="reportName">
         </div>
         <div class="form-group">
             <select class="form-control" name="speakerid">

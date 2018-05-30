@@ -17,7 +17,7 @@ public class PreparedStatmentCompilier {
     private PreparedStatmentCompilier() {
     }
 
-    public static PreparedStatement setValues(PreparedStatement preparedStatement, Object[] values) {
+    public static PreparedStatement setValues(PreparedStatement preparedStatement, Object... values) {
         for (int i = 0; i < values.length; i++) {
             try {
                 preparedStatement.setObject(i + 1, values[i]);
