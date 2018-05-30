@@ -114,7 +114,7 @@ public class ReportServiceImpl implements ReportService {
         if (id != 0) {
             return setReportToSpeaker(id, report.getId());
         }
-        return false;
+        return true;
     }
 
     @Override

@@ -40,7 +40,7 @@
     </c:if>
     <c:if test="${user.role=='ADMINISTRATOR'}">
         <li class="btn btn-light btn-sm">
-            <a class="nav-link" href="#"><fmt:message key="menu_edit"/></a>
+            <a class="nav-link" href="/main?command=editUsers"><fmt:message key="menu_edit"/></a>
         </li>
     </c:if>
     <c:if test="${user.role=='MODERATOR'}">
@@ -57,6 +57,7 @@
     <li>
         <a href="/main?locale=ru&command=locale"><fmt:message key="menu_ru"/></a>
     </li>
+    <li>|</li>
     <li>
         <a href="/main?locale=en&command=locale"><fmt:message key="menu_en"/></a>
     </li>

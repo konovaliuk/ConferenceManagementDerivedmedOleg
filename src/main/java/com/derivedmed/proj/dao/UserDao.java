@@ -18,7 +18,7 @@ public class UserDao implements CrudDao<User> {
     private static final String SQL_EXCEPTION = "SQL exception user DAO";
     private static final String createSql = "INSERT INTO users (role_id, login, password, email) VALUES (?, ?, ?, ?)";
     private static final String getByIdSql = "select * from users where user_id = ?";
-    private static final String updateSql = "update users set login = ?, password = ?, role_id = ? where user_id = ?";
+    private static final String updateSql = "update users set login = ?, password = ?, role_id = ?, email = ?, rating = ? where user_id = ?";
     private static final String deleteSql = "delete from users where user_id =?";
     private static final String getSpeakerByReportId = "select user_id from users_reports where report_id = ? and active_speaker = true";
     private static final String checkSpeakerActiveByDateSql = "SELECT users.* " +
@@ -35,9 +35,10 @@ public class UserDao implements CrudDao<User> {
     private static final String getRoleSql = "select role_name from roles where role_id = ?";
     private static final String voteFirstSql = "update users_reports set rating =? where user_id =? and report_id = ?";
     private static final String voteSecondSql = "update users set rating = rating + ? where user_id = ?";
-    private final String getAllSql = "select * from users";
-    private final ResultSetParser resultSetParser = ResultSetParser.getInstance();
-    private final TransactionManager transactionManager = TransactionManager.getInstance();
+    private static final String getAllSql = "select * from users";
+    private static final ResultSetParser resultSetParser = ResultSetParser.getInstance();
+    private static final TransactionManager transactionManager = TransactionManager.getInstance();
+    private static final String deleteReportFromUsersReportsSq = "delete from users_reports where user_id = ?";
 
     @Override
     public int create(User user) {
@@ -77,7 +78,8 @@ public class UserDao implements CrudDao<User> {
     @Override
     public boolean update(User user) {
         boolean result = true;
-        Object[] values = new Object[]{user.getLogin(), user.getPassword(), user.getRole_id(), user.getId()};
+        user.setRole_id(getRoleId(user.getRole()));
+        Object[] values = new Object[]{user.getLogin(), user.getPassword(), user.getRole_id(), user.getEmail(), user.getRating(), user.getId()};
         try (ConnectionProxy connection = transactionManager.getConnection();
              PreparedStatement preparedStatement = PreparedStatmentCompilier
                      .setValues(connection.prepareStatement(updateSql), values)) {
@@ -112,7 +114,11 @@ public class UserDao implements CrudDao<User> {
         } catch (SQLException e) {
             LOGGER.error(SQL_EXCEPTION, e);
         }
-        return resultList;
+        return resultList.stream().peek(user -> {
+            Role role = getRole(user.getRole_id());
+            user.setRole(role);
+            user.setRoleString(role.name());
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -128,6 +134,20 @@ public class UserDao implements CrudDao<User> {
         }
         return result;
     }
+
+    public boolean deleteFromUsersReports(int userId) {
+        boolean result = false;
+        try (ConnectionProxy connectionProxy = transactionManager.getConnection();
+             PreparedStatement preparedStatement = PreparedStatmentCompilier.setValues(connectionProxy
+                     .prepareStatement(deleteReportFromUsersReportsSq), new Object[]{userId})) {
+            preparedStatement.executeUpdate();
+            result = true;
+        } catch (SQLException e) {
+            LOGGER.error(e);
+        }
+        return result;
+    }
+
 
     public boolean vote(int userId, int reportId, int rating) {
         boolean result = true;

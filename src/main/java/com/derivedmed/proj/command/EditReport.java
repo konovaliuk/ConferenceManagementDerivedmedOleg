@@ -19,8 +19,8 @@ import java.util.regex.Pattern;
 public class EditReport implements Action {
 
     private final ReportService reportService = ServiceFactory.getReportService();
-    private final UserService userService =ServiceFactory.getUserService();
-    private final ConfService confService =ServiceFactory.getConfService();
+    private final UserService userService = ServiceFactory.getUserService();
+    private final ConfService confService = ServiceFactory.getConfService();
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
@@ -37,22 +37,24 @@ public class EditReport implements Action {
         if (req.getMethod().equals("GET")) {
             return "pages/editreport.jsp";
         }
-        String reportName = req.getParameter("reportName").replaceAll("\\s{2,}"," ");
+        String reportName = req.getParameter("reportName").replaceAll("\\s{2,}", " ");
         String speakerid = req.getParameter("speakerid");
-        if (StringUtils.isBlank(speakerid)) {
-            req.setAttribute("message","u must to choose speaker!");
-            return "pages/editreport.jsp";
+        int id = 0;
+        if (StringUtils.isNoneBlank(speakerid)) {
+            id = Integer.parseInt(speakerid);
         }
         if (!checkField(reportName)) {
             req.setAttribute("message", "fields may contains only letters and numbers");
             return "pages/editreport.jsp";
         }
-        reportService.editReport(report, Integer.parseInt(speakerid));
+        report.setReport_name(reportName);
+        reportService.editReport(report, id);
         return new UpcomingConfs().execute(req, resp);
     }
+
     private boolean checkField(String value) {
         Pattern p = Pattern.compile("^[а-яА-ЯёЁa-zA-Z0-9\\s*]+$");
         Matcher m = p.matcher(value);
-        return m.matches()||StringUtils.isBlank(value);
+        return m.matches();
     }
 }

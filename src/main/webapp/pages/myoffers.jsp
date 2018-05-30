@@ -9,8 +9,8 @@
 </head>
 <body>
 <jsp:include page="menu.jsp"/>
-<jsp:include page="menu.jsp"/>
 <fmt:setLocale value="${loc}"/>
+<fmt:setBundle basename="localization"/>
 <ul class="list-group w-75" style="margin: auto; padding-top: 5px;">
     <li class="list-group-item">
         <div class="row">

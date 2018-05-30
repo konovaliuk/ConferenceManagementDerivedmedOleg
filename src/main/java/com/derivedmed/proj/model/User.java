@@ -28,6 +28,16 @@ public class User {
 
     private Role role;
 
+    private String roleString;
+
+    public String getRoleString() {
+        return roleString;
+    }
+
+    public void setRoleString(String roleString) {
+        this.roleString = roleString;
+    }
+
     public User() {
 
     }

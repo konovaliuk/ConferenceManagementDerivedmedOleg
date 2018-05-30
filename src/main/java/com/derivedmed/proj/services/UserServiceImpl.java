@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean delete(int id) {
-        return userDao.delete(id);
+        return userDao.deleteFromUsersReports(id) && userDao.delete(id);
     }
 
     @Override

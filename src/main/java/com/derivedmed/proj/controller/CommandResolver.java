@@ -33,6 +33,9 @@ public class CommandResolver {
         commands.put("locale", new Locale());
         commands.put("deleteOfferedReport",new Delete());
         commands.put("deleteReport",new Delete());
+        commands.put("deleteUser",new Delete());
+        commands.put("editUsers",new EditUsers());
+        commands.put("editUser",new EditUser());
     }
 
     public static CommandResolver getInstance() {

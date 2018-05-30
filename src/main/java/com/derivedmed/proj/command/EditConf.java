@@ -64,6 +64,6 @@ public class EditConf implements Action {
     private boolean checkField(String value) {
         Pattern p = Pattern.compile("^[а-яА-ЯёЁa-zA-Z0-9\\s*]+$");
         Matcher m = p.matcher(value);
-        return m.matches() || StringUtils.isBlank(value);
+        return m.matches();
     }
 }

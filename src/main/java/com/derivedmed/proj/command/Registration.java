@@ -19,24 +19,18 @@ public class Registration implements Action {
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         User user = new User();
         String email = req.getParameter("email");
-        Pattern p = Pattern.compile("^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$");
-        Matcher m = p.matcher(email);
-        if (!m.matches()) {
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        if (!checkEmail(email) || StringUtils.isBlank(email)) {
             req.setAttribute("message", "invalid email");
             return "pages/registration.jsp";
         }
-        String username = req.getParameter("username");
-        p = Pattern.compile("^[а-яА-ЯёЁa-zA-Z0-9]+\\s{0,1}+[а-яА-ЯёЁa-zA-Z0-9]+$");
-        m = p.matcher(username);
-        if (!m.matches() || StringUtils.isBlank(username)) {
+        if (!checkUserName(username) || StringUtils.isBlank(username)) {
             req.setAttribute("message", "invalid login");
             return "pages/registration.jsp";
         }
-        String password = req.getParameter("password");
-        p = Pattern.compile("^[a-zA-Z0-9]+$");
-        m = p.matcher(password);
-        if (!m.matches()){
-            req.setAttribute("message","invalid password");
+        if (!checkPassword(password) || StringUtils.isBlank(password)) {
+            req.setAttribute("message", "invalid password");
             return "pages/registration.jsp";
         }
         user.setLogin(username);
@@ -52,5 +46,23 @@ public class Registration implements Action {
         }
         req.setAttribute("message", "sorry,current login or email already taken");
         return "pages/registration.jsp";
+    }
+
+    private boolean checkEmail(String email) {
+        Pattern p = Pattern.compile("^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$");
+        Matcher m = p.matcher(email);
+        return m.matches();
+    }
+
+    private boolean checkUserName(String userName) {
+        Pattern p = Pattern.compile("^[а-яА-ЯёЁa-zA-Z0-9]+\\s{0,1}+[а-яА-ЯёЁa-zA-Z0-9]+$");
+        Matcher m = p.matcher(userName);
+        return m.matches();
+    }
+
+    private boolean checkPassword(String password) {
+        Pattern p = Pattern.compile("^[a-zA-Z0-9]+$\"");
+        Matcher m = p.matcher(password);
+        return m.matches();
     }
 }
